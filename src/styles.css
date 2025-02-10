@@ -15,6 +15,34 @@ h1,h2,h3,h4,h5,h6,p{
 }
 
 a, button{
-    text-decoration: none;
     cursor: pointer;
+}
+
+/* Animaciones */
+::view-transition-old(root){
+    animation: salida 1s ease 0s 1 normal forwards;
+
+}
+
+::view-transition-new(root){
+    animation: entrada 1s ease 0s 1 normal forwards;
+}
+
+@keyframes entrada {
+	0% {
+		opacity: 0;
+	}
+
+	100% {
+		opacity: 1;
+	}
+}
+@keyframes salida {
+	0% {
+		opacity: 1;
+	}
+
+	100% {
+		opacity: 0;
+	}
 }
