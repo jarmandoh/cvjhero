@@ -113,8 +113,8 @@ export class ExperienciaComponent {
       fecha: '2022-09-29'
     },
     {
-      titulo: 'ótica profesional intachable',
-      descripcion: 'Mantuve una ótica profesional intachable en todas mis acciones y decisiones, generando confianza y respeto en el entorno laboral.',
+      titulo: 'Ética profesional intachable',
+      descripcion: 'Mantuve una ética profesional intachable en todas mis acciones y decisiones, generando confianza y respeto en el entorno laboral.',
       puntuacion: 4,
       autor: 'Roberto Pórez',
       fecha: '2022-08-05'
