@@ -1,0 +1,9 @@
+{
+  "routes": {
+    "/CV": {},
+    "/CV/contacto": {},
+    "/CV/experiencia": {},
+    "/CV/proyectos": {},
+    "/CV/servicios": {}
+  }
+}

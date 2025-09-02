@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:cvjhero": "node dist/cvjhero/server/server.mjs",
-    "deploy": "ng deploy --base-href=https://jarmandoh.github.io/CV/"
+    "deploy": "ng deploy --base-href=/CV/"
   },
   "private": true,
   "dependencies": {
