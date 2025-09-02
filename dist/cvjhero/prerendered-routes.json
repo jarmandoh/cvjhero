@@ -1,0 +1,9 @@
+{
+  "routes": {
+    "/cvjhero": {},
+    "/cvjhero/contacto": {},
+    "/cvjhero/experiencia": {},
+    "/cvjhero/proyectos": {},
+    "/cvjhero/servicios": {}
+  }
+}
