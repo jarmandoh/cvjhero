@@ -1,9 +1,9 @@
 {
   "routes": {
-    "/https:/jarmandoh.github.io/CV": {},
-    "/https:/jarmandoh.github.io/CV/contacto": {},
-    "/https:/jarmandoh.github.io/CV/experiencia": {},
-    "/https:/jarmandoh.github.io/CV/proyectos": {},
-    "/https:/jarmandoh.github.io/CV/servicios": {}
+    "/CV": {},
+    "/CV/contacto": {},
+    "/CV/experiencia": {},
+    "/CV/proyectos": {},
+    "/CV/servicios": {}
   }
 }

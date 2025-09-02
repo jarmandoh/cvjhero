@@ -1,6 +1,6 @@
 
 export default {
-  basePath: 'https://jarmandoh.github.io/CV',
+  basePath: '/CV',
   supportedLocales: {
   "en-US": ""
 },

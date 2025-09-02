@@ -20,12 +20,12 @@ a, button{
 
 /* Animaciones */
 ::view-transition-old(root){
-    animation: salida 1s ease 0s 1 normal forwards;
+    animation: salida .3s ease 0s 1 normal forwards;
 
 }
 
 ::view-transition-new(root){
-    animation: entrada 1s ease 0s 1 normal forwards;
+    animation: entrada .3s ease 0s 1 normal forwards;
 }
 
 @keyframes entrada {
