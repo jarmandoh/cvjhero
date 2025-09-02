@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "cvjhero": {
+    "CV": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/cvjhero",
+            "outputPath": "dist/CV",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -30,7 +30,7 @@
               "src/styles.css"
             ],
             "scripts": [],
-            "baseHref": "/cvjhero/",
+            "baseHref": "/CV/",
             "server": "src/main.server.ts",
             "outputMode": "server",
             "ssr": {
@@ -65,10 +65,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "cvjhero:build:production"
+              "buildTarget": "CV:build:production"
             },
             "development": {
-              "buildTarget": "cvjhero:build:development"
+              "buildTarget": "CV:build:development"
             }
           },
           "defaultConfiguration": "development"
