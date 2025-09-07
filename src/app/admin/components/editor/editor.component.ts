@@ -1,5 +1,5 @@
-import { Component, Input, Output, EventEmitter, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Input, Output, EventEmitter, OnInit, ViewChild, ElementRef, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-editor',
@@ -24,6 +24,8 @@ export class EditorComponent implements OnInit {
   hasUnsavedChanges = false;
   isAutoSaving = false;
   autoSaveTimer: any;
+
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
   ngOnInit(): void {
     this.editorContent = this.content;
@@ -91,8 +93,10 @@ export class EditorComponent implements OnInit {
   formatText(command: string, value?: string): void {
     if (this.readonly) return;
     
-    document.execCommand(command, false, value);
-    this.onContentChange();
+    if (isPlatformBrowser(this.platformId)) {
+      document.execCommand(command, false, value);
+      this.onContentChange();
+    }
   }
 
   insertList(ordered: boolean = false): void {
@@ -122,6 +126,9 @@ export class EditorComponent implements OnInit {
 
   // Helper methods for toolbar state
   isCommandActive(command: string): boolean {
+    if (!isPlatformBrowser(this.platformId)) {
+      return false;
+    }
     return document.queryCommandState(command);
   }
 }

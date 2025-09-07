@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 interface MediaFile {
@@ -94,6 +94,8 @@ export class MediaManagerComponent implements OnInit {
       }
     ];
   }
+
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
   // Gestión de archivos
   onFileInputChange(event: Event): void {
@@ -285,10 +287,12 @@ export class MediaManagerComponent implements OnInit {
   }
 
   downloadFile(file: MediaFile): void {
-    const link = document.createElement('a');
-    link.href = file.url;
-    link.download = file.name;
-    link.click();
+    if (isPlatformBrowser(this.platformId)) {
+      const link = document.createElement('a');
+      link.href = file.url;
+      link.download = file.name;
+      link.click();
+    }
   }
 
   // Utilidades

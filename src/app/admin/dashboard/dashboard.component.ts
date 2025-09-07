@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
+import { Inject, PLATFORM_ID } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../models/user.model';
 
@@ -93,7 +94,8 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   ngOnInit(): void {
@@ -111,8 +113,10 @@ export class DashboardComponent implements OnInit {
 
   navigateToAction(action: QuickAction): void {
     if (action.route === '/') {
-      // Abrir sitio principal en nueva pestaña
-      window.open(action.route, '_blank');
+      // Abrir sitio principal en nueva pestaña (solo en el navegador)
+      if (isPlatformBrowser(this.platformId)) {
+        window.open(action.route, '_blank');
+      }
     } else {
       this.router.navigate([action.route]);
     }

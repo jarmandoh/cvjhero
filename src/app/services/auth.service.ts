@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { User, LoginCredentials, AuthResponse } from '../models/user.model';
 
@@ -12,7 +13,7 @@ export class AuthService {
   private readonly TOKEN_KEY = 'cvjhero_admin_token';
   private readonly USER_KEY = 'cvjhero_admin_user';
 
-  constructor() {
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
     // Verificar si hay un usuario guardado en localStorage al inicializar
     this.loadUserFromStorage();
   }
@@ -54,8 +55,10 @@ export class AuthService {
    * Cerrar sesión
    */
   logout(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
-    localStorage.removeItem(this.USER_KEY);
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem(this.TOKEN_KEY);
+      localStorage.removeItem(this.USER_KEY);
+    }
     this.currentUserSubject.next(null);
   }
 
@@ -63,6 +66,9 @@ export class AuthService {
    * Verificar si el usuario está autenticado
    */
   isAuthenticated(): boolean {
+    if (!isPlatformBrowser(this.platformId)) {
+      return false;
+    }
     const token = localStorage.getItem(this.TOKEN_KEY);
     return !!token && !this.isTokenExpired(token);
   }
@@ -71,6 +77,9 @@ export class AuthService {
    * Obtener el token actual
    */
   getToken(): string | null {
+    if (!isPlatformBrowser(this.platformId)) {
+      return null;
+    }
     return localStorage.getItem(this.TOKEN_KEY);
   }
 
@@ -85,6 +94,10 @@ export class AuthService {
    * Establecer la sesión
    */
   private setSession(authResponse: AuthResponse): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    
     const expiresAt = Date.now() + (authResponse.expiresIn * 1000);
     
     localStorage.setItem(this.TOKEN_KEY, authResponse.token);
@@ -100,6 +113,10 @@ export class AuthService {
    * Cargar usuario desde localStorage
    */
   private loadUserFromStorage(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    
     const userStr = localStorage.getItem(this.USER_KEY);
     const token = localStorage.getItem(this.TOKEN_KEY);
     
