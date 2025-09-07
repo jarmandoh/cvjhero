@@ -1,0 +1,366 @@
+<div [class]="isModal ? 'media-modal' : 'media-container'" class="bg-white rounded-lg shadow-sm">
+  
+  <!-- Header -->
+  <div class="media-header bg-gray-50 border-b border-gray-200 p-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <h2 class="text-lg font-semibold text-gray-900">Gestión de Medios</h2>
+        
+        <!-- Breadcrumb -->
+        <nav class="flex items-center space-x-2 text-sm">
+          <button 
+            *ngIf="currentFolder" 
+            (click)="goBack()"
+            class="text-blue-600 hover:text-blue-700"
+          >
+            📁 Inicio
+          </button>
+          <span *ngIf="currentFolder" class="text-gray-400">/</span>
+          <span *ngIf="currentFolder" class="text-gray-600">
+            {{ getCurrentFolderName() }}
+          </span>
+        </nav>
+      </div>
+
+      <div class="flex items-center space-x-2">
+        <!-- View Mode Toggle -->
+        <div class="flex rounded-lg border border-gray-300">
+          <button 
+            (click)="viewMode = 'grid'"
+            [class.bg-blue-500]="viewMode === 'grid'"
+            [class.text-white]="viewMode === 'grid'"
+            [class.text-gray-600]="viewMode !== 'grid'"
+            class="px-3 py-1 text-sm rounded-l-lg"
+          >
+            ⊞
+          </button>
+          <button 
+            (click)="viewMode = 'list'"
+            [class.bg-blue-500]="viewMode === 'list'"
+            [class.text-white]="viewMode === 'list'"
+            [class.text-gray-600]="viewMode !== 'list'"
+            class="px-3 py-1 text-sm rounded-r-lg"
+          >
+            ≡
+          </button>
+        </div>
+
+        <!-- Close Button (only in modal) -->
+        <button 
+          *ngIf="isModal"
+          (click)="closeModal()"
+          class="p-2 text-gray-400 hover:text-gray-600"
+        >
+          ✕
+        </button>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="flex items-center justify-between mt-4">
+      <div class="flex items-center space-x-4">
+        <!-- Upload Button -->
+        <button 
+          (click)="fileInput.click()"
+          class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          <span class="mr-2">📤</span>
+          Subir Archivos
+        </button>
+        
+        <!-- Create Folder -->
+        <button 
+          (click)="createFolder()"
+          class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+        >
+          <span class="mr-2">📁</span>
+          Nueva Carpeta
+        </button>
+
+        <!-- File Input (hidden) -->
+        <input 
+          #fileInput
+          type="file" 
+          multiple 
+          (change)="onFileInputChange($event)"
+          class="hidden"
+          accept="image/*,video/*,.pdf,.doc,.docx,.txt"
+        >
+      </div>
+
+      <!-- Search and Filters -->
+      <div class="flex items-center space-x-3">
+        <!-- Search -->
+        <div class="relative">
+          <input 
+            type="text"
+            [(ngModel)]="searchTerm"
+            placeholder="Buscar archivos..."
+            class="pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-64"
+          >
+          <span class="absolute left-2 top-2.5 text-gray-400">🔍</span>
+        </div>
+
+        <!-- Type Filter -->
+        <select [(ngModel)]="filterType" class="border border-gray-300 rounded-lg px-3 py-2">
+          <option value="all">Todos los tipos</option>
+          <option value="image">Imágenes</option>
+          <option value="video">Videos</option>
+          <option value="document">Documentos</option>
+        </select>
+
+        <!-- Sort -->
+        <select [(ngModel)]="sortBy" class="border border-gray-300 rounded-lg px-3 py-2">
+          <option value="date">Fecha</option>
+          <option value="name">Nombre</option>
+          <option value="size">Tamaño</option>
+        </select>
+
+        <button 
+          (click)="sortOrder = sortOrder === 'asc' ? 'desc' : 'asc'"
+          class="p-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+          [title]="sortOrder === 'asc' ? 'Orden ascendente' : 'Orden descendente'"
+        >
+          {{ sortOrder === 'asc' ? '↑' : '↓' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upload Progress -->
+  <div *ngIf="isUploading" class="bg-blue-50 border-b border-blue-200 p-4">
+    <div class="flex items-center space-x-3">
+      <div class="flex-1">
+        <div class="bg-blue-200 rounded-full h-2">
+          <div 
+            class="bg-blue-600 h-2 rounded-full transition-all duration-300"
+            [style.width.%]="uploadProgress"
+          ></div>
+        </div>
+      </div>
+      <span class="text-sm text-blue-700">{{ uploadProgress.toFixed(0) }}%</span>
+    </div>
+  </div>
+
+  <!-- Drag and Drop Zone -->
+  <div 
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave($event)"
+    (drop)="onDrop($event)"
+    [class.border-blue-500]="isDragOver"
+    [class.bg-blue-50]="isDragOver"
+    class="flex-1 p-4 border-2 border-dashed border-gray-300 transition-colors"
+  >
+    
+    <!-- Drop Zone Overlay -->
+    <div 
+      *ngIf="isDragOver" 
+      class="absolute inset-0 flex items-center justify-center bg-blue-50 bg-opacity-90 z-10"
+    >
+      <div class="text-center">
+        <div class="text-4xl mb-2">📁</div>
+        <p class="text-lg font-medium text-blue-700">Suelta los archivos aquí</p>
+      </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="min-h-96">
+      
+      <!-- Folders -->
+      <div *ngIf="currentFolders.length > 0" class="mb-6">
+        <h3 class="text-sm font-medium text-gray-700 mb-3">Carpetas</h3>
+        <div class="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
+          <div 
+            *ngFor="let folder of currentFolders"
+            (click)="enterFolder(folder.id)"
+            class="flex flex-col items-center p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+          >
+            <div class="text-3xl mb-2">📁</div>
+            <span class="text-xs text-center text-gray-600 truncate w-full">{{ folder.name }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Files Grid View -->
+      <div *ngIf="viewMode === 'grid'" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
+        <div 
+          *ngFor="let file of filteredFiles"
+          (click)="selectFile(file)"
+          [class.border-blue-500]="isFileSelected(file)"
+          [class.bg-blue-50]="isFileSelected(file)"
+          class="relative group border-2 border-gray-200 rounded-lg p-3 hover:border-gray-300 cursor-pointer transition-all"
+        >
+          <!-- File Preview -->
+          <div class="aspect-square mb-2 bg-gray-100 rounded flex items-center justify-center overflow-hidden">
+            <img 
+              *ngIf="file.type === 'image'" 
+              [src]="file.url" 
+              [alt]="file.name"
+              class="w-full h-full object-cover"
+              loading="lazy"
+            >
+            <div 
+              *ngIf="file.type !== 'image'" 
+              class="text-2xl"
+            >
+              {{ getFileIcon(file) }}
+            </div>
+          </div>
+
+          <!-- File Info -->
+          <div class="text-xs">
+            <p class="font-medium text-gray-900 truncate" [title]="file.name">{{ file.name }}</p>
+            <p class="text-gray-500">{{ formatFileSize(file.size) }}</p>
+          </div>
+
+          <!-- Selection Indicator -->
+          <div 
+            *ngIf="isFileSelected(file)"
+            class="absolute top-2 right-2 w-5 h-5 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs"
+          >
+            ✓
+          </div>
+
+          <!-- Actions Menu -->
+          <div class="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div class="bg-white rounded shadow-sm border border-gray-200">
+              <button 
+                (click)="$event.stopPropagation(); renameFile(file)"
+                class="block w-full px-2 py-1 text-xs text-left hover:bg-gray-50"
+                title="Renombrar"
+              >
+                ✏️
+              </button>
+              <button 
+                (click)="$event.stopPropagation(); downloadFile(file)"
+                class="block w-full px-2 py-1 text-xs text-left hover:bg-gray-50"
+                title="Descargar"
+              >
+                ⬇️
+              </button>
+              <button 
+                (click)="$event.stopPropagation(); deleteFile(file)"
+                class="block w-full px-2 py-1 text-xs text-left hover:bg-gray-50 text-red-600"
+                title="Eliminar"
+              >
+                🗑️
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Files List View -->
+      <div *ngIf="viewMode === 'list'" class="space-y-2">
+        <div 
+          *ngFor="let file of filteredFiles"
+          (click)="selectFile(file)"
+          [class.border-blue-500]="isFileSelected(file)"
+          [class.bg-blue-50]="isFileSelected(file)"
+          class="flex items-center space-x-4 p-3 border border-gray-200 rounded-lg hover:border-gray-300 cursor-pointer transition-all"
+        >
+          <!-- File Icon/Preview -->
+          <div class="w-12 h-12 bg-gray-100 rounded flex items-center justify-center flex-shrink-0">
+            <img 
+              *ngIf="file.type === 'image'" 
+              [src]="file.url" 
+              [alt]="file.name"
+              class="w-full h-full object-cover rounded"
+              loading="lazy"
+            >
+            <div 
+              *ngIf="file.type !== 'image'" 
+              class="text-xl"
+            >
+              {{ getFileIcon(file) }}
+            </div>
+          </div>
+
+          <!-- File Details -->
+          <div class="flex-1 min-w-0">
+            <p class="font-medium text-gray-900 truncate">{{ file.name }}</p>
+            <p class="text-sm text-gray-500">
+              {{ formatFileSize(file.size) }} • {{ file.uploadDate | date:'short' }}
+            </p>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex items-center space-x-2">
+            <button 
+              (click)="$event.stopPropagation(); renameFile(file)"
+              class="p-2 text-gray-400 hover:text-gray-600"
+              title="Renombrar"
+            >
+              ✏️
+            </button>
+            <button 
+              (click)="$event.stopPropagation(); downloadFile(file)"
+              class="p-2 text-gray-400 hover:text-gray-600"
+              title="Descargar"
+            >
+              ⬇️
+            </button>
+            <button 
+              (click)="$event.stopPropagation(); deleteFile(file)"
+              class="p-2 text-gray-400 hover:text-red-600"
+              title="Eliminar"
+            >
+              🗑️
+            </button>
+          </div>
+
+          <!-- Selection Indicator -->
+          <div 
+            *ngIf="isFileSelected(file)"
+            class="w-5 h-5 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0"
+          >
+            ✓
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div 
+        *ngIf="filteredFiles.length === 0 && currentFolders.length === 0" 
+        class="text-center py-12"
+      >
+        <div class="text-6xl mb-4">📁</div>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">No hay archivos</h3>
+        <p class="text-gray-500 mb-4">
+          {{ currentFolder ? 'Esta carpeta está vacía' : 'Sube tus primeros archivos para comenzar' }}
+        </p>
+        <button 
+          (click)="fileInput.click()"
+          class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          Subir Archivos
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer (only in modal) -->
+  <div *ngIf="isModal" class="border-t border-gray-200 p-4 bg-gray-50">
+    <div class="flex items-center justify-between">
+      <div class="text-sm text-gray-600">
+        {{ selectedFiles.length }} archivo(s) seleccionado(s)
+      </div>
+      
+      <div class="flex space-x-3">
+        <button 
+          (click)="closeModal()"
+          class="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+        >
+          Cancelar
+        </button>
+        <button 
+          (click)="confirmSelection()"
+          [disabled]="selectedFiles.length === 0"
+          class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          Seleccionar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

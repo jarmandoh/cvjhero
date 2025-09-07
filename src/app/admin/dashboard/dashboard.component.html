@@ -1,0 +1,137 @@
+<div class="min-h-screen bg-gray-50">
+  <!-- Header/Navigation -->
+  <header class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <!-- Logo y título -->
+        <div class="flex items-center">
+          <h1 class="text-xl font-semibold text-gray-900">Panel de Administración</h1>
+          <span class="ml-2 px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">CVJHero</span>
+        </div>
+
+        <!-- Usuario y acciones -->
+        <div class="flex items-center space-x-4">
+          <a 
+            href="/" 
+            target="_blank"
+            class="text-gray-500 hover:text-gray-700 transition-colors"
+            title="Ver sitio web"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+            </svg>
+          </a>
+          
+          <div class="flex items-center space-x-2">
+            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+              <span class="text-white text-sm font-medium">{{ currentUser?.name?.charAt(0) || 'A' }}</span>
+            </div>
+            <span class="text-sm font-medium text-gray-700">{{ currentUser?.name }}</span>
+          </div>
+
+          <button 
+            (click)="logout()" 
+            class="text-gray-500 hover:text-red-600 transition-colors"
+            title="Cerrar sesión"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <!-- Welcome Section -->
+    <div class="px-4 py-6 sm:px-0">
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold text-gray-900">
+          {{ getWelcomeMessage() }}, {{ currentUser?.name }}
+        </h2>
+        <p class="text-gray-600 mt-1">Aquí tienes un resumen de tu portafolio y acciones rápidas.</p>
+      </div>
+
+      <!-- Dashboard Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div 
+          *ngFor="let card of dashboardCards" 
+          class="bg-white overflow-hidden shadow rounded-lg hover:shadow-lg transition-shadow cursor-pointer"
+          (click)="card.route && $event"
+        >
+          <div class="p-5">
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <div [class]="card.color + ' rounded-md p-3'">
+                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="card.icon"></path>
+                  </svg>
+                </div>
+              </div>
+              <div class="ml-5 w-0 flex-1">
+                <dl>
+                  <dt class="text-sm font-medium text-gray-500 truncate">{{ card.title }}</dt>
+                  <dd class="text-lg font-medium text-gray-900">{{ card.value }}</dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="mb-8">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Acciones Rápidas</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <button 
+            *ngFor="let action of quickActions" 
+            (click)="navigateToAction(action)"
+            class="text-left p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow border border-gray-200 hover:border-gray-300"
+          >
+            <div class="flex items-center mb-3">
+              <div [class]="action.color + ' rounded-md p-2'">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="action.icon"></path>
+                </svg>
+              </div>
+            </div>
+            <h4 class="text-sm font-medium text-gray-900 mb-1">{{ action.title }}</h4>
+            <p class="text-xs text-gray-500">{{ action.description }}</p>
+          </button>
+        </div>
+      </div>
+
+      <!-- Recent Activity Section -->
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Actividad Reciente</h3>
+          <div class="space-y-3">
+            <div class="flex items-center text-sm">
+              <div class="w-2 h-2 bg-green-400 rounded-full mr-3"></div>
+              <span class="text-gray-600">Último login: {{ currentUser?.lastLogin | date:'short' }}</span>
+            </div>
+            <div class="flex items-center text-sm">
+              <div class="w-2 h-2 bg-blue-400 rounded-full mr-3"></div>
+              <span class="text-gray-600">Sistema actualizado correctamente</span>
+            </div>
+            <div class="flex items-center text-sm">
+              <div class="w-2 h-2 bg-yellow-400 rounded-full mr-3"></div>
+              <span class="text-gray-600">3 proyectos publicados</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-gray-200 mt-8">
+    <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+      <p class="text-center text-sm text-gray-500">
+        CVJHero Admin Panel - {{ 'now' | date:'yyyy' }} © Janier Hernández
+      </p>
+    </div>
+  </footer>
+</div>

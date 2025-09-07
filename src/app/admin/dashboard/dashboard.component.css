@@ -1,0 +1,61 @@
+/* Dashboard specific styles */
+.dashboard-card {
+  transition: all 0.2s ease-in-out;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-2px);
+}
+
+/* Quick action buttons */
+.quick-action {
+  transition: all 0.2s ease-in-out;
+}
+
+.quick-action:hover {
+  transform: translateY(-1px);
+}
+
+/* Activity indicator animations */
+.activity-dot {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Custom scrollbar for activity section */
+.activity-section {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.activity-section::-webkit-scrollbar {
+  width: 4px;
+}
+
+.activity-section::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.activity-section::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 2px;
+}
+
+.activity-section::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
