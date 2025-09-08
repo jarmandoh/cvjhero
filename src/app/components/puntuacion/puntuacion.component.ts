@@ -1,11 +1,8 @@
-import { NgFor } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-puntuacion',
-  imports: [
-    NgFor
-  ],
+  imports: [],
   templateUrl: './puntuacion.component.html',
   styleUrl: './puntuacion.component.css'
 })

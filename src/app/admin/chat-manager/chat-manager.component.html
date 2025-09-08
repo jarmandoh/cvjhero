@@ -1,303 +1,307 @@
 <!-- Gestor de Chat para Admin -->
 <div class="chat-manager bg-gray-50 min-h-screen">
-  <!-- Header -->
-  <div class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
-    <div class="flex items-center justify-between">
-      <h1 class="text-2xl font-bold text-gray-900">
-        Gestión de Chat
-        @if (unreadCount > 0) {
-          <span class="ml-2 bg-red-500 text-white text-sm px-2 py-1 rounded-full">
-            {{ unreadCount }}
-          </span>
-        }
-      </h1>
-      
-      <div class="flex items-center space-x-4">
-        <!-- Filtros -->
-        <div class="flex space-x-2">
-          <button
-            (click)="setFilter('all')"
-            [class.bg-blue-600]="sessionFilter === 'all'"
-            [class.text-white]="sessionFilter === 'all'"
-            [class.bg-gray-200]="sessionFilter !== 'all'"
-            [class.text-gray-700]="sessionFilter !== 'all'"
-            class="px-3 py-2 text-sm font-medium rounded-md transition-colors"
-          >
-            Todas ({{ getSessionCountByStatus('all') }})
-          </button>
-          <button
-            (click)="setFilter('active')"
-            [class.bg-green-600]="sessionFilter === 'active'"
-            [class.text-white]="sessionFilter === 'active'"
-            [class.bg-gray-200]="sessionFilter !== 'active'"
-            [class.text-gray-700]="sessionFilter !== 'active'"
-            class="px-3 py-2 text-sm font-medium rounded-md transition-colors"
-          >
-            Activas ({{ getSessionCountByStatus('active') }})
-          </button>
-          <button
-            (click)="setFilter('waiting')"
-            [class.bg-yellow-600]="sessionFilter === 'waiting'"
-            [class.text-white]="sessionFilter === 'waiting'"
-            [class.bg-gray-200]="sessionFilter !== 'waiting'"
-            [class.text-gray-700]="sessionFilter !== 'waiting'"
-            class="px-3 py-2 text-sm font-medium rounded-md transition-colors"
-          >
-            Esperando ({{ getSessionCountByStatus('waiting') }})
-          </button>
-          <button
-            (click)="setFilter('closed')"
-            [class.bg-gray-600]="sessionFilter === 'closed'"
-            [class.text-white]="sessionFilter === 'closed'"
-            [class.bg-gray-200]="sessionFilter !== 'closed'"
-            [class.text-gray-700]="sessionFilter !== 'closed'"
-            class="px-3 py-2 text-sm font-medium rounded-md transition-colors"
-          >
-            Cerradas ({{ getSessionCountByStatus('closed') }})
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
+	<!-- Header -->
+	<div class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+		<div class="flex items-center justify-between">
+			<h1 class="text-2xl font-bold text-gray-900">
+				Gestión de Chat
+				@if (unreadCount > 0) {
+					<span class="ml-2 bg-red-500 text-white text-sm px-2 py-1 rounded-full">
+						{{ unreadCount }}
+					</span>
+				}
+			</h1>
+			
+			<div class="flex items-center space-x-4">
+				<!-- Filtros -->
+				<div class="flex space-x-2">
+					<button
+						(click)="setFilter('all')"
+						[class.bg-blue-600]="sessionFilter === 'all'"
+						[class.text-white]="sessionFilter === 'all'"
+						[class.bg-gray-200]="sessionFilter !== 'all'"
+						[class.text-gray-700]="sessionFilter !== 'all'"
+						class="px-3 py-2 text-sm font-medium rounded-md transition-colors"
+					>
+						Todas ({{ getSessionCountByStatus('all') }})
+					</button>
+					<button
+						(click)="setFilter('active')"
+						[class.bg-green-600]="sessionFilter === 'active'"
+						[class.text-white]="sessionFilter === 'active'"
+						[class.bg-gray-200]="sessionFilter !== 'active'"
+						[class.text-gray-700]="sessionFilter !== 'active'"
+						class="px-3 py-2 text-sm font-medium rounded-md transition-colors"
+					>
+						Activas ({{ getSessionCountByStatus('active') }})
+					</button>
+					<button
+						(click)="setFilter('waiting')"
+						[class.bg-yellow-600]="sessionFilter === 'waiting'"
+						[class.text-white]="sessionFilter === 'waiting'"
+						[class.bg-gray-200]="sessionFilter !== 'waiting'"
+						[class.text-gray-700]="sessionFilter !== 'waiting'"
+						class="px-3 py-2 text-sm font-medium rounded-md transition-colors"
+					>
+						Esperando ({{ getSessionCountByStatus('waiting') }})
+					</button>
+					<button
+						(click)="setFilter('closed')"
+						[class.bg-gray-600]="sessionFilter === 'closed'"
+						[class.text-white]="sessionFilter === 'closed'"
+						[class.bg-gray-200]="sessionFilter !== 'closed'"
+						[class.text-gray-700]="sessionFilter !== 'closed'"
+						class="px-3 py-2 text-sm font-medium rounded-md transition-colors"
+					>
+						Cerradas ({{ getSessionCountByStatus('closed') }})
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="flex h-screen">
+		<!-- Panel izquierdo - Lista de sesiones -->
+		<div class="w-1/3 bg-white border-r border-gray-200">
+			<!-- Notificaciones recientes -->
+			@if (notifications.length > 0) {
+				<div class="border-b border-gray-200 p-4">
+					<h3 class="text-sm font-medium text-gray-900 mb-2">Notificaciones Recientes</h3>
+					<div class="space-y-2 max-h-32 overflow-y-auto">
+						@for (notification of notifications.slice(0, 3); track notification.id) {
+							<div class="text-xs bg-blue-50 text-blue-800 p-2 rounded">
+								{{ notification.message }}
+								<span class="text-blue-600 ml-2">{{ getTimeAgo(notification.timestamp) }}</span>
+							</div>
+						}
+					</div>
+				</div>
+			}
 
-  <div class="flex h-screen">
-    <!-- Panel izquierdo - Lista de sesiones -->
-    <div class="w-1/3 bg-white border-r border-gray-200">
-      <!-- Notificaciones recientes -->
-      @if (notifications.length > 0) {
-        <div class="border-b border-gray-200 p-4">
-          <h3 class="text-sm font-medium text-gray-900 mb-2">Notificaciones Recientes</h3>
-          <div class="space-y-2 max-h-32 overflow-y-auto">
-            @for (notification of notifications.slice(0, 3); track notification.id) {
-              <div class="text-xs bg-blue-50 text-blue-800 p-2 rounded">
-                {{ notification.message }}
-                <span class="text-blue-600 ml-2">{{ getTimeAgo(notification.timestamp) }}</span>
-              </div>
-            }
-          </div>
-        </div>
-      }
+			<!-- Lista de sesiones -->
+			<div class="overflow-y-auto">
+				@for (session of getFilteredSessions(); track session.id) {
+					<div 
+						(click)="selectSession(session)"
+						[class.bg-blue-50]="selectedSession?.id === session.id"
+						[class.border-l-4]="selectedSession?.id === session.id"
+						[class.border-blue-500]="selectedSession?.id === session.id"
+						class="p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors"
+					>
+						<div class="flex items-start justify-between">
+							<div class="flex-1 min-w-0">
+								<!-- Información del usuario -->
+								<div class="flex items-center space-x-2">
+									<h4 class="text-sm font-medium text-gray-900 truncate">
+										{{ session.userName || 'Usuario Anónimo' }}
+									</h4>
+									<span 
+										[class]="getStatusColor(session.status)"
+										class="px-2 py-1 text-xs font-medium rounded-full"
+									>
+										{{ getStatusText(session.status) }}
+									</span>
+								</div>
+								
+								<!-- Email si está disponible -->
+								@if (session.userEmail) {
+									<p class="text-xs text-gray-500 mt-1 truncate">
+										{{ session.userEmail }}
+									</p>
+								}
+								
+								<!-- Último mensaje -->
+								<p class="text-sm text-gray-600 mt-1 truncate">
+									{{ getLastMessage(session) }}
+								</p>
+								
+								<!-- Tiempo -->
+								<p class="text-xs text-gray-400 mt-1">
+									{{ getTimeAgo(session.lastActivity) }}
+								</p>
+							</div>
+							
+							<div class="flex flex-col items-end space-y-1">
+								<!-- Contador de mensajes no leídos -->
+								@if (getUnreadMessagesCount(session) > 0) {
+									<span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+										{{ getUnreadMessagesCount(session) }}
+									</span>
+								}
+								
+								<!-- Botón cerrar sesión -->
+								@if (session.status !== 'closed') {
+									<button
+										(click)="closeSession(session); $event.stopPropagation()"
+										class="text-gray-400 hover:text-red-600 transition-colors"
+										title="Cerrar sesión"
+									>
+										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+										</svg>
+									</button>
+								}
+							</div>
+						</div>
+					</div>
+				}
+				
+				<!-- Estado vacío -->
+				@if (getFilteredSessions().length === 0) {
+					<div class="p-8 text-center text-gray-500">
+						<svg class="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+								d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 3.582-8 8-8s8 3.582 8 8z">
+							</path>
+						</svg>
+						<p>No hay sesiones {{ sessionFilter === 'all' ? '' : sessionFilter + 's' }}</p>
+					</div>
+				}
+			</div>
+		</div>
 
-      <!-- Lista de sesiones -->
-      <div class="overflow-y-auto">
-        @for (session of getFilteredSessions(); track session.id) {
-          <div 
-            (click)="selectSession(session)"
-            [class.bg-blue-50]="selectedSession?.id === session.id"
-            [class.border-l-4]="selectedSession?.id === session.id"
-            [class.border-blue-500]="selectedSession?.id === session.id"
-            class="p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors"
-          >
-            <div class="flex items-start justify-between">
-              <div class="flex-1 min-w-0">
-                <!-- Información del usuario -->
-                <div class="flex items-center space-x-2">
-                  <h4 class="text-sm font-medium text-gray-900 truncate">
-                    {{ session.userName || 'Usuario Anónimo' }}
-                  </h4>
-                  <span 
-                    [class]="getStatusColor(session.status)"
-                    class="px-2 py-1 text-xs font-medium rounded-full"
-                  >
-                    {{ getStatusText(session.status) }}
-                  </span>
-                </div>
-                
-                <!-- Email si está disponible -->
-                @if (session.userEmail) {
-                  <p class="text-xs text-gray-500 mt-1 truncate">
-                    {{ session.userEmail }}
-                  </p>
-                }
-                
-                <!-- Último mensaje -->
-                <p class="text-sm text-gray-600 mt-1 truncate">
-                  {{ getLastMessage(session) }}
-                </p>
-                
-                <!-- Tiempo -->
-                <p class="text-xs text-gray-400 mt-1">
-                  {{ getTimeAgo(session.lastActivity) }}
-                </p>
-              </div>
-              
-              <div class="flex flex-col items-end space-y-1">
-                <!-- Contador de mensajes no leídos -->
-                @if (getUnreadMessagesCount(session) > 0) {
-                  <span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
-                    {{ getUnreadMessagesCount(session) }}
-                  </span>
-                }
-                
-                <!-- Botón cerrar sesión -->
-                @if (session.status !== 'closed') {
-                  <button
-                    (click)="closeSession(session); $event.stopPropagation()"
-                    class="text-gray-400 hover:text-red-600 transition-colors"
-                    title="Cerrar sesión"
-                  >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                  </button>
-                }
-              </div>
-            </div>
-          </div>
-        }
-        
-        <!-- Estado vacío -->
-        <div 
-          *ngIf="getFilteredSessions().length === 0" 
-          class="p-8 text-center text-gray-500"
-        >
-          <svg class="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 3.582-8 8-8s8 3.582 8 8z">
-            </path>
-          </svg>
-          <p>No hay sesiones {{ sessionFilter === 'all' ? '' : sessionFilter + 's' }}</p>
-        </div>
-      </div>
-    </div>
+	<!-- Panel derecho - Chat activo -->
+	<div class="flex-1 flex flex-col">
+		<!-- Chat seleccionado -->
+		@if (selectedSession) {
+			<div class="flex flex-col h-full">
+				<!-- Header del chat -->
+				<div class="bg-white border-b border-gray-200 p-4">
+					<div class="flex items-center justify-between">
+						<div>
+							<h3 class="text-lg font-medium text-gray-900">
+								{{ selectedSession.userName || 'Usuario Anónimo' }}
+							</h3>
+							<p class="text-sm text-gray-500">
+								Sesión iniciada: {{ getTimeAgo(selectedSession.startTime) }}
+								@if (selectedSession.userEmail) {
+									<span class="ml-2">
+										• {{ selectedSession.userEmail }}
+									</span>
+								}
+							</p>
+						</div>
+						<div class="flex items-center space-x-2">
+							<span 
+								[class]="getStatusColor(selectedSession.status)"
+								class="px-3 py-1 text-sm font-medium rounded-full"
+							>
+								{{ getStatusText(selectedSession.status) }}
+							</span>
+							@if (selectedSession.status !== 'closed') {
+								<button
+									(click)="closeSession(selectedSession)"
+									class="text-gray-400 hover:text-red-600 transition-colors"
+									title="Cerrar sesión"
+								>
+									<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+									</svg>
+								</button>
+							}
+						</div>
+					</div>
+				</div>
 
-    <!-- Panel derecho - Chat activo -->
-    <div class="flex-1 flex flex-col">
-      <!-- Chat seleccionado -->
-      <div *ngIf="selectedSession" class="flex flex-col h-full">
-        <!-- Header del chat -->
-        <div class="bg-white border-b border-gray-200 p-4">
-          <div class="flex items-center justify-between">
-            <div>
-              <h3 class="text-lg font-medium text-gray-900">
-                {{ selectedSession.userName || 'Usuario Anónimo' }}
-              </h3>
-              <p class="text-sm text-gray-500">
-                Sesión iniciada: {{ getTimeAgo(selectedSession.startTime) }}
-                <span *ngIf="selectedSession.userEmail" class="ml-2">
-                  • {{ selectedSession.userEmail }}
-                </span>
-              </p>
-            </div>
-            <div class="flex items-center space-x-2">
-              <span 
-                [class]="getStatusColor(selectedSession.status)"
-                class="px-3 py-1 text-sm font-medium rounded-full"
-              >
-                {{ getStatusText(selectedSession.status) }}
-              </span>
-              <button
-                *ngIf="selectedSession.status !== 'closed'"
-                (click)="closeSession(selectedSession)"
-                class="text-gray-400 hover:text-red-600 transition-colors"
-                title="Cerrar sesión"
-              >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
+				<!-- Mensajes -->
+				<div class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+					@for (message of selectedSession.messages; track message.id) {
+						<div 
+							class="flex"
+							[class.justify-end]="isAdminMessage(message)"
+							[class.justify-start]="!isAdminMessage(message)"
+						>
+							<div class="max-w-xs lg:max-w-md">
+								<!-- Avatar para mensajes no admin -->
+								@if (!isAdminMessage(message)) {
+									<div class="flex items-start space-x-2">
+										<div class="flex-shrink-0">
+											<div 
+												class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium"
+												[class.bg-blue-500]="isBotMessage(message)"
+												[class.text-white]="isBotMessage(message)"
+												[class.bg-gray-300]="isUserMessage(message)"
+												[class.text-gray-700]="isUserMessage(message)"
+											>
+												{{ isBotMessage(message) ? '🤖' : (selectedSession.userName?.charAt(0) || 'U') }}
+											</div>
+										</div>
+										<div class="flex-1">
+											<div 
+												class="px-4 py-2 rounded-lg"
+												[class.bg-white]="isUserMessage(message)"
+												[class.bg-blue-100]="isBotMessage(message)"
+											>
+												<p class="text-sm" [innerHTML]="message.message"></p>
+												<p class="text-xs text-gray-500 mt-1">
+													{{ getMessageTime(message.timestamp) }}
+													@if (isBotMessage(message)) {
+														<span class="ml-1">(Bot)</span>
+													}
+												</p>
+											</div>
+										</div>
+									</div>
+								}
 
-        <!-- Mensajes -->
-        <div class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
-          <div 
-            *ngFor="let message of selectedSession.messages"
-            class="flex"
-            [class.justify-end]="isAdminMessage(message)"
-            [class.justify-start]="!isAdminMessage(message)"
-          >
-            <div class="max-w-xs lg:max-w-md">
-              <!-- Avatar para mensajes no admin -->
-              <div 
-                *ngIf="!isAdminMessage(message)" 
-                class="flex items-start space-x-2"
-              >
-                <div class="flex-shrink-0">
-                  <div 
-                    class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium"
-                    [class.bg-blue-500]="isBotMessage(message)"
-                    [class.text-white]="isBotMessage(message)"
-                    [class.bg-gray-300]="isUserMessage(message)"
-                    [class.text-gray-700]="isUserMessage(message)"
-                  >
-                    {{ isBotMessage(message) ? '🤖' : (selectedSession.userName?.charAt(0) || 'U') }}
-                  </div>
-                </div>
-                <div class="flex-1">
-                  <div 
-                    class="px-4 py-2 rounded-lg"
-                    [class.bg-white]="isUserMessage(message)"
-                    [class.bg-blue-100]="isBotMessage(message)"
-                  >
-                    <p class="text-sm" [innerHTML]="message.message"></p>
-                    <p class="text-xs text-gray-500 mt-1">
-                      {{ getMessageTime(message.timestamp) }}
-                      <span *ngIf="isBotMessage(message)" class="ml-1">(Bot)</span>
-                    </p>
-                  </div>
-                </div>
-              </div>
+								<!-- Mensaje admin -->
+								@if (isAdminMessage(message)) {
+									<div class="text-right">
+										<div class="bg-green-500 text-white px-4 py-2 rounded-lg inline-block">
+											<p class="text-sm" [innerHTML]="message.message"></p>
+											<p class="text-xs text-green-100 mt-1">
+												{{ getMessageTime(message.timestamp) }} (Tú)
+											</p>
+										</div>
+									</div>
+								}
+							</div>
+						</div>
+					}
+				</div>
 
-              <!-- Mensaje admin -->
-              <div *ngIf="isAdminMessage(message)" class="text-right">
-                <div class="bg-green-500 text-white px-4 py-2 rounded-lg inline-block">
-                  <p class="text-sm" [innerHTML]="message.message"></p>
-                  <p class="text-xs text-green-100 mt-1">
-                    {{ getMessageTime(message.timestamp) }} (Tú)
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+				<!-- Input de respuesta -->
+				@if (selectedSession.status !== 'closed') {
+					<div class="bg-white border-t border-gray-200 p-4">
+						<form [formGroup]="messageForm" (ngSubmit)="sendAdminMessage()">
+							<div class="flex space-x-4">
+								<textarea
+									formControlName="message"
+									(keydown)="onKeyPress($event)"
+									placeholder="Escribe tu respuesta..."
+									rows="2"
+									class="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+								></textarea>
+								<button
+									type="submit"
+									[disabled]="messageForm.invalid"
+									class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+								>
+									Enviar
+								</button>
+							</div>
+						</form>
+					</div>
+				}
+			</div>
+		}
 
-        <!-- Input de respuesta -->
-        <div 
-          *ngIf="selectedSession.status !== 'closed'" 
-          class="bg-white border-t border-gray-200 p-4"
-        >
-          <form [formGroup]="messageForm" (ngSubmit)="sendAdminMessage()">
-            <div class="flex space-x-4">
-              <textarea
-                formControlName="message"
-                (keydown)="onKeyPress($event)"
-                placeholder="Escribe tu respuesta..."
-                rows="2"
-                class="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-              ></textarea>
-              <button
-                type="submit"
-                [disabled]="messageForm.invalid"
-                class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                Enviar
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <!-- Estado sin selección -->
-      <div 
-        *ngIf="!selectedSession" 
-        class="flex-1 flex items-center justify-center bg-gray-50"
-      >
-        <div class="text-center text-gray-500">
-          <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 3.582-8 8-8s8 3.582 8 8z">
-            </path>
-          </svg>
-          <h3 class="text-lg font-medium text-gray-900 mb-2">
-            Selecciona una sesión de chat
-          </h3>
-          <p>
-            Elige una conversación de la lista para ver los mensajes y responder
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
+		<!-- Estado sin selección -->
+		@if (!selectedSession) {
+			<div class="flex-1 flex items-center justify-center bg-gray-50">
+				<div class="text-center text-gray-500">
+					<svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+							d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 3.582-8 8-8s8 3.582 8 8z">
+						</path>
+					</svg>
+					<h3 class="text-lg font-medium text-gray-900 mb-2">
+						Selecciona una sesión de chat
+					</h3>
+					<p>
+						Elige una conversación de la lista para ver los mensajes y responder
+					</p>
+				</div>
+			</div>
+		}
+	</div>
 </div>

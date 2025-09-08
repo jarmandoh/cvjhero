@@ -31,7 +31,7 @@ export class BlogService {
       slug: 'introduccion-angular-17-nuevas-caracteristicas',
       content: `# Introducción a Angular 17
 
-Angular 17 marca un hito importante en la evolución del framework, introduciendo características revolucionarias que transforman la manera en que desarrollamos aplicaciones web.
+Angular 20 marca un hito importante en la evolución del framework, introduciendo características revolucionarias que transforman la manera en que desarrollamos aplicaciones web.
 
 ## Control Flow Syntax
 

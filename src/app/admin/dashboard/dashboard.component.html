@@ -10,50 +10,52 @@
 
     <!-- Dashboard Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      <div 
-        *ngFor="let card of dashboardCards" 
-        class="bg-white overflow-hidden shadow rounded-lg hover:shadow-lg transition-shadow cursor-pointer"
-        (click)="card.route && $event"
-      >
-        <div class="p-5">
-          <div class="flex items-center">
-            <div class="flex-shrink-0">
-              <div [class]="card.color + ' rounded-md p-3'">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="card.icon"></path>
-                </svg>
+      @for (card of dashboardCards; track card.title) {
+        <div 
+          class="bg-white overflow-hidden shadow rounded-lg hover:shadow-lg transition-shadow cursor-pointer"
+          (click)="card.route && $event"
+        >
+          <div class="p-5">
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <div [class]="card.color + ' rounded-md p-3'">
+                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="card.icon"></path>
+                  </svg>
+                </div>
               </div>
-            </div>
-            <div class="ml-5 w-0 flex-1">
-              <dl>
-                <dt class="text-sm font-medium text-gray-500 truncate">{{ card.title }}</dt>
-                <dd class="text-lg font-medium text-gray-900">{{ card.value }}</dd>
-              </dl>
+              <div class="ml-5 w-0 flex-1">
+                <dl>
+                  <dt class="text-sm font-medium text-gray-500 truncate">{{ card.title }}</dt>
+                  <dd class="text-lg font-medium text-gray-900">{{ card.value }}</dd>
+                </dl>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      }
     </div>
 
     <!-- Quick Actions -->
     <div class="mb-8">
       <h3 class="text-lg font-medium text-gray-900 mb-4">Acciones Rápidas</h3>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <button 
-          *ngFor="let action of quickActions" 
-          (click)="navigateToAction(action)"
-          class="text-left p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow border border-gray-200 hover:border-gray-300"
-        >
-          <div class="flex items-center mb-3">
-            <div [class]="action.color + ' rounded-md p-2'">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="action.icon"></path>
-              </svg>
+        @for (action of quickActions; track action.title) {
+          <button 
+            (click)="navigateToAction(action)"
+            class="text-left p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow border border-gray-200 hover:border-gray-300"
+          >
+            <div class="flex items-center mb-3">
+              <div [class]="action.color + ' rounded-md p-2'">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="action.icon"></path>
+                </svg>
+              </div>
             </div>
-          </div>
-          <h4 class="text-sm font-medium text-gray-900 mb-1">{{ action.title }}</h4>
-          <p class="text-xs text-gray-500">{{ action.description }}</p>
-        </button>
+            <h4 class="text-sm font-medium text-gray-900 mb-1">{{ action.title }}</h4>
+            <p class="text-xs text-gray-500">{{ action.description }}</p>
+          </button>
+        }
       </div>
     </div>
 

@@ -1,4 +1,3 @@
-import { NgFor } from '@angular/common';
 import { Component } from '@angular/core';
 import { PuntuacionComponent } from '../../components/puntuacion/puntuacion.component';
 
@@ -13,7 +12,6 @@ interface Experiencia {
 @Component({
   selector: 'app-experiencia',
   imports: [
-    NgFor,
     PuntuacionComponent
   ],
   templateUrl: './experiencia.component.html',

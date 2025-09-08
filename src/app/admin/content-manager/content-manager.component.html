@@ -40,22 +40,24 @@
   <div class="p-6">
     
     <!-- Projects Tab -->
-    <div *ngIf="activeTab === 'projects'">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-xl font-semibold text-gray-900">Gestión de Proyectos</h2>
-        <button 
-          (click)="startCreateProject()"
-          class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-          </svg>
-          Nuevo Proyecto
-        </button>
-      </div>
+    @if (activeTab === 'projects') {
+      <div>
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-xl font-semibold text-gray-900">Gestión de Proyectos</h2>
+          <button 
+            (click)="startCreateProject()"
+            class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Nuevo Proyecto
+          </button>
+        </div>
 
-      <!-- Project Form -->
-      <div *ngIf="isCreating || editingItem" class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+        <!-- Project Form -->
+        @if (isCreating || editingItem) {
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
         <div class="p-6 border-b border-gray-200">
           <h3 class="text-lg font-medium text-gray-900">
             {{ isCreating ? 'Crear Nuevo Proyecto' : 'Editar Proyecto' }}
@@ -74,9 +76,11 @@
                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   [class.border-red-500]="isFieldInvalid(projectForm, 'name')"
                 >
-                <p *ngIf="isFieldInvalid(projectForm, 'name')" class="mt-1 text-sm text-red-600">
-                  {{ getFieldError(projectForm, 'name') }}
-                </p>
+                @if (isFieldInvalid(projectForm, 'name')) {
+                  <p class="mt-1 text-sm text-red-600">
+                    {{ getFieldError(projectForm, 'name') }}
+                  </p>
+                }
               </div>
 
               <div>
@@ -88,9 +92,11 @@
                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   [class.border-red-500]="isFieldInvalid(projectForm, 'technologies')"
                 >
-                <p *ngIf="isFieldInvalid(projectForm, 'technologies')" class="mt-1 text-sm text-red-600">
-                  {{ getFieldError(projectForm, 'technologies') }}
-                </p>
+                @if (isFieldInvalid(projectForm, 'technologies')) {
+                  <p class="mt-1 text-sm text-red-600">
+                    {{ getFieldError(projectForm, 'technologies') }}
+                  </p>
+                }
               </div>
 
               <div>
@@ -102,9 +108,11 @@
                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   [class.border-red-500]="isFieldInvalid(projectForm, 'link')"
                 >
-                <p *ngIf="isFieldInvalid(projectForm, 'link')" class="mt-1 text-sm text-red-600">
-                  {{ getFieldError(projectForm, 'link') }}
-                </p>
+                @if (isFieldInvalid(projectForm, 'link')) {
+                  <p class="mt-1 text-sm text-red-600">
+                    {{ getFieldError(projectForm, 'link') }}
+                  </p>
+                }
               </div>
 
               <div>
@@ -134,13 +142,15 @@
                     📁 Buscar
                   </button>
                 </div>
-                <div *ngIf="projectForm.get('imageUrl')?.value" class="mt-2">
-                  <img 
-                    [src]="projectForm.get('imageUrl')?.value" 
-                    alt="Vista previa"
-                    class="w-32 h-20 object-cover rounded border"
-                  >
-                </div>
+                @if (projectForm.get('imageUrl')?.value) {
+                  <div class="mt-2">
+                    <img 
+                      [src]="projectForm.get('imageUrl')?.value" 
+                      alt="Vista previa"
+                      class="w-32 h-20 object-cover rounded border"
+                    >
+                  </div>
+                }
               </div>
 
               <div class="flex items-center space-x-4">
@@ -196,65 +206,75 @@
         </div>
         
         <div class="divide-y divide-gray-200">
-          <div *ngFor="let project of projects" class="p-4 hover:bg-gray-50">
-            <div class="flex items-center justify-between">
-              <div class="flex-1">
-                <div class="flex items-center space-x-2">
-                  <h4 class="font-medium text-gray-900">{{ project.name }}</h4>
-                  <span *ngIf="project.featured" class="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-full">Destacado</span>
-                  <span *ngIf="!project.isActive" class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">Inactivo</span>
+          @for (project of projects; track project.id) {
+            <div class="p-4 hover:bg-gray-50">
+              <div class="flex items-center justify-between">
+                <div class="flex-1">
+                  <div class="flex items-center space-x-2">
+                    <h4 class="font-medium text-gray-900">{{ project.name }}</h4>
+                    @if (project.featured) {
+                      <span class="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-full">Destacado</span>
+                    }
+                    @if (!project.isActive) {
+                      <span class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">Inactivo</span>
+                    }
+                  </div>
+                  <p class="text-sm text-gray-600 mt-1">{{ project.description | slice:0:100 }}...</p>
+                  <div class="flex items-center space-x-2 mt-2">
+                    @for (tech of project.technologies; track tech) {
+                      <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">
+                        {{ tech }}
+                      </span>
+                    }
+                  </div>
                 </div>
-                <p class="text-sm text-gray-600 mt-1">{{ project.description | slice:0:100 }}...</p>
-                <div class="flex items-center space-x-2 mt-2">
-                  <span *ngFor="let tech of project.technologies" 
-                        class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">
-                    {{ tech }}
-                  </span>
-                </div>
-              </div>
               
-              <div class="flex items-center space-x-2">
-                <button 
-                  (click)="startEditProject(project)"
-                  class="p-2 text-gray-400 hover:text-blue-600"
-                  title="Editar"
-                >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                  </svg>
-                </button>
-                
-                <button 
-                  (click)="deleteProject(project)"
-                  class="p-2 text-gray-400 hover:text-red-600"
-                  title="Eliminar"
-                >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                  </svg>
-                </button>
+                <div class="flex items-center space-x-2">
+                  <button 
+                    (click)="startEditProject(project)"
+                    class="p-2 text-gray-400 hover:text-blue-600"
+                    title="Editar"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                    </svg>
+                  </button>
+                  
+                  <button 
+                    (click)="deleteProject(project)"
+                    class="p-2 text-gray-400 hover:text-red-600"
+                    title="Eliminar"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+          }
           
-          <div *ngIf="projects.length === 0" class="p-8 text-center text-gray-500">
-            <svg class="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-            </svg>
-            <p>No hay proyectos creados aún</p>
-            <button 
-              (click)="startCreateProject()"
-              class="mt-2 text-blue-600 hover:text-blue-700"
-            >
-              Crear tu primer proyecto
-            </button>
-          </div>
+          @if (projects.length === 0) {
+            <div class="p-8 text-center text-gray-500">
+              <svg class="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+              </svg>
+              <p>No hay proyectos creados aún</p>
+              <button 
+                (click)="startCreateProject()"
+                class="mt-2 text-blue-600 hover:text-blue-700"
+              >
+                Crear tu primer proyecto
+              </button>
+            </div>
+          }
         </div>
       </div>
-    </div>
+    }
 
     <!-- Services Tab -->
-    <div *ngIf="activeTab === 'services'">
+          </div>
+    } @else if (activeTab === 'services') {
       <div class="flex justify-between items-center mb-6">
         <h2 class="text-xl font-semibold text-gray-900">Gestión de Servicios</h2>
         <button 
@@ -269,7 +289,8 @@
       </div>
 
       <!-- Service Form -->
-      <div *ngIf="isCreating || editingItem" class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+      @if (isCreating || editingItem) {
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
         <div class="p-6 border-b border-gray-200">
           <h3 class="text-lg font-medium text-gray-900">
             {{ isCreating ? 'Crear Nuevo Servicio' : 'Editar Servicio' }}
@@ -288,9 +309,11 @@
                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   [class.border-red-500]="isFieldInvalid(serviceForm, 'title')"
                 >
-                <p *ngIf="isFieldInvalid(serviceForm, 'title')" class="mt-1 text-sm text-red-600">
-                  {{ getFieldError(serviceForm, 'title') }}
-                </p>
+                @if (isFieldInvalid(serviceForm, 'title')) {
+                  <p class="mt-1 text-sm text-red-600">
+                    {{ getFieldError(serviceForm, 'title') }}
+                  </p>
+                }
               </div>
 
               <div>
@@ -320,13 +343,15 @@
                     📁 Buscar
                   </button>
                 </div>
-                <div *ngIf="serviceForm.get('imageUrl')?.value" class="mt-2">
-                  <img 
-                    [src]="serviceForm.get('imageUrl')?.value" 
-                    alt="Vista previa"
-                    class="w-32 h-20 object-cover rounded border"
-                  >
-                </div>
+                @if (serviceForm.get('imageUrl')?.value) {
+                  <div class="mt-2">
+                    <img 
+                      [src]="serviceForm.get('imageUrl')?.value" 
+                      alt="Vista previa"
+                      class="w-32 h-20 object-cover rounded border"
+                    >
+                  </div>
+                }
               </div>
 
               <div>
@@ -369,6 +394,7 @@
           </div>
         </form>
       </div>
+      }
 
       <!-- Services List -->
       <div class="bg-white rounded-lg shadow-sm border border-gray-200">
@@ -377,68 +403,72 @@
         </div>
         
         <div class="divide-y divide-gray-200">
-          <div *ngFor="let service of services" class="p-4 hover:bg-gray-50">
-            <div class="flex items-center justify-between">
-              <div class="flex-1">
-                <div class="flex items-center space-x-2">
-                  <h4 class="font-medium text-gray-900">{{ service.title }}</h4>
-                  <span class="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded-full">Orden: {{ service.order }}</span>
-                  <span *ngIf="!service.isActive" class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">Inactivo</span>
+          @for (service of services; track service.id) {
+            <div class="p-4 hover:bg-gray-50">
+              <div class="flex items-center justify-between">
+                <div class="flex-1">
+                  <div class="flex items-center space-x-2">
+                    <h4 class="font-medium text-gray-900">{{ service.title }}</h4>
+                    <span class="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded-full">Orden: {{ service.order }}</span>
+                    @if (!service.isActive) {
+                      <span class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">Inactivo</span>
+                    }
+                  </div>
+                  <p class="text-sm text-gray-600 mt-1">{{ service.description | slice:0:150 }}...</p>
                 </div>
-                <p class="text-sm text-gray-600 mt-1">{{ service.description | slice:0:150 }}...</p>
-              </div>
-              
-              <div class="flex items-center space-x-2">
-                <button 
-                  (click)="startEditService(service)"
-                  class="p-2 text-gray-400 hover:text-blue-600"
-                  title="Editar"
-                >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                  </svg>
-                </button>
                 
-                <button 
-                  (click)="deleteService(service)"
-                  class="p-2 text-gray-400 hover:text-red-600"
-                  title="Eliminar"
-                >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                  </svg>
-                </button>
+                <div class="flex items-center space-x-2">
+                  <button 
+                    (click)="startEditService(service)"
+                    class="p-2 text-gray-400 hover:text-blue-600"
+                    title="Editar"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                    </svg>
+                  </button>
+                  
+                  <button 
+                    (click)="deleteService(service)"
+                    class="p-2 text-gray-400 hover:text-red-600"
+                    title="Eliminar"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+          }
           
-          <div *ngIf="services.length === 0" class="p-8 text-center text-gray-500">
-            <svg class="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
-            </svg>
-            <p>No hay servicios creados aún</p>
-            <button 
-              (click)="startCreateService()"
-              class="mt-2 text-blue-600 hover:text-blue-700"
-            >
-              Crear tu primer servicio
-            </button>
-          </div>
+          @if (services.length === 0) {
+            <div class="p-8 text-center text-gray-500">
+              <svg class="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+              </svg>
+              <p>No hay servicios creados aún</p>
+              <button 
+                (click)="startCreateService()"
+                class="mt-2 text-blue-600 hover:text-blue-700"
+              >
+                Crear tu primer servicio
+              </button>
+            </div>
+          }
         </div>
       </div>
-    </div>
-
-    <!-- Info Tab -->
-    <div *ngIf="activeTab === 'info'">
+    } @else if (activeTab === 'info') {
       <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <h2 class="text-xl font-semibold text-gray-900 mb-4">Información Personal</h2>
         <p class="text-gray-600">Esta funcionalidad estará disponible próximamente.</p>
       </div>
-    </div>
+    }
 
   </div>
 <!-- Media Manager Modal -->
-<div *ngIf="showMediaManager" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+@if (showMediaManager) {
+  <div class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
   <app-media-manager 
     [isModal]="true"
     [allowMultipleSelection]="false"
@@ -447,4 +477,5 @@
     (onClose)="closeMediaManager()"
     class="w-full max-w-6xl h-5/6"
   ></app-media-manager>
-</div>
+  </div>
+}

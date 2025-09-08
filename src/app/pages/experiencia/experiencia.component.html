@@ -1,28 +1,30 @@
 <div class="container mx-auto p-4 bg-gray-400 rounded-2xl">
     <h2 class="text-3xl font-bold mb-4">Experiencias y Reseñas</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <div *ngFor="let experiencia of experiencias" class="bg-white rounded-lg shadow-md p-6">
-        <h3 class="text-xl font-semibold mb-2">{{ experiencia.titulo }}</h3>
-        <p class="text-gray-700 mb-4">{{ experiencia.descripcion }}</p>
-        <div class="flex items-center justify-between">
-          <div class="flex items-center">
-            <app-puntuacion [(rating)]="experiencia.puntuacion" (ratingChange)="onRatingChange($event)"></app-puntuacion>
-            <!-- @for (star of [1,2,3,4,5]; track $index) {
-                <span class="fas fa-star text-yellow-500 mr-2" [class.filled]="star <= experiencia.puntuacion">☆</span>
-            } -->
-            <!-- <span class="text-yellow-500 mr-2">
-              <i class="fas fa-star">1</i>
-              <i class="fas fa-star">2</i>
-              <i class="fas fa-star">3</i>
-              <i class="fas fa-star">4</i>
-              <i class="fas fa-star">5</i>
-            </span>
-            <span class="text-gray-600">{{ experiencia.puntuacion }} estrellas</span> -->
-          </div>
-          <div class="text-end">
-            <small class="text-gray-600 text-xs">{{ experiencia.autor }} - {{ experiencia.fecha }}</small>
+      @for (experiencia of experiencias; track experiencia.titulo) {
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-xl font-semibold mb-2">{{ experiencia.titulo }}</h3>
+          <p class="text-gray-700 mb-4">{{ experiencia.descripcion }}</p>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <app-puntuacion [(rating)]="experiencia.puntuacion" (ratingChange)="onRatingChange($event)"></app-puntuacion>
+              <!-- @for (star of [1,2,3,4,5]; track $index) {
+                  <span class="fas fa-star text-yellow-500 mr-2" [class.filled]="star <= experiencia.puntuacion">☆</span>
+              } -->
+              <!-- <span class="text-yellow-500 mr-2">
+                <i class="fas fa-star">1</i>
+                <i class="fas fa-star">2</i>
+                <i class="fas fa-star">3</i>
+                <i class="fas fa-star">4</i>
+                <i class="fas fa-star">5</i>
+              </span>
+              <span class="text-gray-600">{{ experiencia.puntuacion }} estrellas</span> -->
+            </div>
+            <div class="text-end">
+              <small class="text-gray-600 text-xs">{{ experiencia.autor }} - {{ experiencia.fecha }}</small>
+            </div>
           </div>
         </div>
-      </div>
+      }
     </div>
   </div>

@@ -1,7 +1,7 @@
 <div class="editor-container bg-white border border-gray-300 rounded-lg shadow-sm">
   <!-- Toolbar -->
-  <div class="editor-toolbar bg-gray-50 border-b border-gray-200 p-2 flex flex-wrap items-center gap-1" 
-       *ngIf="!readonly">
+  @if (!readonly) {
+    <div class="editor-toolbar bg-gray-50 border-b border-gray-200 p-2 flex flex-wrap items-center gap-1">
     
     <!-- Text Formatting -->
     <div class="toolbar-group flex gap-1">
@@ -144,53 +144,63 @@
       </button>
     </div>
   </div>
+  }
 
   <!-- Editor/Preview Area -->
   <div class="editor-content relative">
     <!-- Editor Mode -->
-    <div 
-      *ngIf="!isPreviewMode"
-      #editor
-      contenteditable="true"
-      [attr.data-placeholder]="placeholder"
-      [innerHTML]="editorContent"
-      (input)="onContentInput($event)"
-      [style.height.px]="height"
-      class="editor-area"
-      [class.readonly]="readonly"
-    ></div>
+    @if (!isPreviewMode) {
+      <div 
+        #editor
+        contenteditable="true"
+        [attr.data-placeholder]="placeholder"
+        [innerHTML]="editorContent"
+        (input)="onContentInput($event)"
+        [style.height.px]="height"
+        class="editor-area"
+        [class.readonly]="readonly"
+      ></div>
+    }
 
     <!-- Preview Mode -->
-    <div 
-      *ngIf="isPreviewMode"
-      [innerHTML]="editorContent"
-      [style.height.px]="height"
-      class="preview-area"
-    ></div>
+    @if (isPreviewMode) {
+      <div 
+        [innerHTML]="editorContent"
+        [style.height.px]="height"
+        class="preview-area"
+      ></div>
+    }
 
     <!-- Status Bar -->
     <div class="status-bar bg-gray-50 border-t border-gray-200 px-3 py-2 text-xs text-gray-500 flex justify-between items-center">
       <div class="flex items-center gap-4">
-        <span *ngIf="hasUnsavedChanges" class="text-yellow-600">
-          • Cambios sin guardar
-        </span>
-        <span *ngIf="isAutoSaving" class="text-blue-600">
-          🔄 Guardando automáticamente...
-        </span>
-        <span *ngIf="!hasUnsavedChanges && !isAutoSaving" class="text-green-600">
-          ✓ Guardado
-        </span>
+        @if (hasUnsavedChanges) {
+          <span class="text-yellow-600">
+            • Cambios sin guardar
+          </span>
+        }
+        @if (isAutoSaving) {
+          <span class="text-blue-600">
+            🔄 Guardando automáticamente...
+          </span>
+        }
+        @if (!hasUnsavedChanges && !isAutoSaving) {
+          <span class="text-green-600">
+            ✓ Guardado
+          </span>
+        }
       </div>
       
       <div class="flex items-center gap-2">
-        <button 
-          *ngIf="hasUnsavedChanges"
-          type="button"
-          (click)="saveContent()"
-          class="save-btn"
-        >
-          Guardar ahora
-        </button>
+        @if (hasUnsavedChanges) {
+          <button 
+            type="button"
+            (click)="saveContent()"
+            class="save-btn"
+          >
+            Guardar ahora
+          </button>
+        }
         <span>{{ editorContent.length }} caracteres</span>
       </div>
     </div>
