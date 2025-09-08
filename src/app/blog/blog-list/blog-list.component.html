@@ -1,0 +1,335 @@
+<div class="min-h-screen bg-gray-50">
+  <!-- Hero Section -->
+  <section class="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16">
+    <div class="container mx-auto px-6">
+      <div class="text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">Blog de Desarrollo</h1>
+        <p class="text-xl md:text-2xl text-blue-100 mb-8">
+          Artículos sobre desarrollo web, tecnologías modernas y mejores prácticas
+        </p>
+        
+        <!-- Search Bar -->
+        <div class="max-w-2xl mx-auto">
+          <div class="flex flex-col sm:flex-row gap-4">
+            <div class="flex-1">
+              <input
+                type="text"
+                [(ngModel)]="searchTerm"
+                (keyup.enter)="onSearch()"
+                placeholder="Buscar artículos..."
+                class="w-full px-4 py-3 rounded-lg text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-300"
+              >
+            </div>
+            <button
+              (click)="onSearch()"
+              class="px-6 py-3 bg-white text-blue-600 rounded-lg font-medium hover:bg-blue-50 transition-colors"
+            >
+              <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+              Buscar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="container mx-auto px-6 py-12">
+    <div class="flex flex-col lg:flex-row gap-8">
+      
+      <!-- Main Content -->
+      <main class="lg:w-2/3">
+        
+        <!-- Featured Posts -->
+        @if (featuredPosts.length > 0) {
+          <section class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+              <svg class="w-6 h-6 mr-2 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+              Artículos Destacados
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+              @for (post of featuredPosts; track trackByPostId($index, post)) {
+                <article class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                  @if (post.coverImage) {
+                    <div class="h-48 bg-gradient-to-r from-blue-500 to-purple-600"></div>
+                  }
+                  
+                  <div class="p-6">
+                    <div class="flex items-center gap-2 mb-3">
+                      @for (category of post.categories; track category) {
+                        <span 
+                          [style.background-color]="getCategoryColor(category)"
+                          class="text-xs text-white px-2 py-1 rounded-full"
+                        >
+                          {{ category }}
+                        </span>
+                      }
+                      <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full font-medium">
+                        Destacado
+                      </span>
+                    </div>
+                    
+                    <h3 class="text-xl font-bold text-gray-800 mb-2 line-clamp-2">
+                      <a [routerLink]="['/blog', post.slug]" class="hover:text-blue-600 transition-colors">
+                        {{ post.title }}
+                      </a>
+                    </h3>
+                    
+                    <p class="text-gray-600 mb-4 line-clamp-3">{{ post.excerpt }}</p>
+                    
+                    <div class="flex items-center justify-between text-sm text-gray-500">
+                      <div class="flex items-center gap-4">
+                        <span>{{ formatDate(post.publishedAt || post.createdAt) }}</span>
+                        <span>{{ post.readingTime }} min de lectura</span>
+                      </div>
+                      <div class="flex items-center gap-3">
+                        <span class="flex items-center gap-1">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                          </svg>
+                          {{ post.views }}
+                        </span>
+                        <span class="flex items-center gap-1">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                          </svg>
+                          {{ post.likes }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              }
+            </div>
+          </section>
+        }
+
+        <!-- Filter Bar -->
+        <div class="flex flex-wrap items-center gap-4 mb-8">
+          <h2 class="text-2xl font-bold text-gray-800">Todos los Artículos</h2>
+          
+          @if (searchTerm || selectedCategory || selectedTag) {
+            <button
+              (click)="clearFilters()"
+              class="text-sm text-blue-600 hover:text-blue-800 underline"
+            >
+              Limpiar filtros
+            </button>
+          }
+          
+          @if (searchResult) {
+            <span class="text-sm text-gray-500">
+              {{ searchResult.total }} artículo{{ searchResult.total !== 1 ? 's' : '' }} encontrado{{ searchResult.total !== 1 ? 's' : '' }}
+            </span>
+          }
+        </div>
+
+        <!-- Active Filters -->
+        @if (searchTerm || selectedCategory || selectedTag) {
+          <div class="mb-6">
+            <div class="flex flex-wrap gap-2">
+              @if (searchTerm) {
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
+                  Buscar: "{{ searchTerm }}"
+                  <button (click)="searchTerm = ''; onSearch()" class="ml-2 hover:text-blue-600">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                  </button>
+                </span>
+              }
+              
+              @if (selectedCategory) {
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800">
+                  Categoría: {{ selectedCategory }}
+                  <button (click)="onCategoryFilter('')" class="ml-2 hover:text-green-600">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                  </button>
+                </span>
+              }
+              
+              @if (selectedTag) {
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-purple-100 text-purple-800">
+                  Tag: {{ selectedTag }}
+                  <button (click)="onTagFilter('')" class="ml-2 hover:text-purple-600">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                  </button>
+                </span>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Posts Grid -->
+        @if (isLoading && posts.length === 0) {
+          <div class="flex justify-center items-center py-12">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          </div>
+        } @else if (posts.length === 0) {
+          <div class="text-center py-12">
+            <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No se encontraron artículos</h3>
+            <p class="text-gray-500">Intenta ajustar los filtros de búsqueda.</p>
+          </div>
+        } @else {
+          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            @for (post of posts; track trackByPostId($index, post)) {
+              <article class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                @if (post.coverImage) {
+                  <div class="h-40 bg-gradient-to-r from-gray-400 to-gray-600"></div>
+                }
+                
+                <div class="p-5">
+                  <div class="flex flex-wrap gap-1 mb-3">
+                    @for (category of post.categories; track category) {
+                      <button
+                        (click)="onCategoryFilter(category.toLowerCase())"
+                        [style.background-color]="getCategoryColor(category)"
+                        class="text-xs text-white px-2 py-1 rounded-full hover:opacity-80 transition-opacity"
+                      >
+                        {{ category }}
+                      </button>
+                    }
+                  </div>
+                  
+                  <h3 class="text-lg font-bold text-gray-800 mb-2 line-clamp-2">
+                    <a [routerLink]="['/blog', post.slug]" class="hover:text-blue-600 transition-colors">
+                      {{ post.title }}
+                    </a>
+                  </h3>
+                  
+                  <p class="text-gray-600 text-sm mb-3 line-clamp-3">{{ post.excerpt }}</p>
+                  
+                  <div class="flex items-center justify-between text-xs text-gray-500">
+                    <span>{{ formatDate(post.publishedAt || post.createdAt) }}</span>
+                    <span>{{ post.readingTime }} min</span>
+                  </div>
+                  
+                  <div class="flex flex-wrap gap-1 mt-3">
+                    @for (tag of post.tags.slice(0, 3); track tag) {
+                      <button
+                        (click)="onTagFilter(tag)"
+                        class="text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded hover:bg-gray-200 transition-colors"
+                      >
+                        #{{ tag }}
+                      </button>
+                    }
+                    @if (post.tags.length > 3) {
+                      <span class="text-xs text-gray-400">+{{ post.tags.length - 3 }}</span>
+                    }
+                  </div>
+                </div>
+              </article>
+            }
+          </div>
+
+          <!-- Load More Button -->
+          @if (searchResult?.hasMore) {
+            <div class="text-center">
+              <button
+                (click)="loadMore()"
+                [disabled]="isLoading"
+                class="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                @if (isLoading) {
+                  <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Cargando...
+                } @else {
+                  Cargar más artículos
+                }
+              </button>
+            </div>
+          }
+        }
+      </main>
+
+      <!-- Sidebar -->
+      <aside class="lg:w-1/3">
+        <div class="space-y-8">
+          
+          <!-- Categories -->
+          @if (categories.length > 0) {
+            <div class="bg-white rounded-lg shadow-md p-6">
+              <h3 class="text-lg font-bold text-gray-800 mb-4">Categorías</h3>
+              <div class="space-y-2">
+                @for (category of categories; track trackByCategoryId($index, category)) {
+                  <button
+                    (click)="onCategoryFilter(category.slug)"
+                    [class]="'flex items-center justify-between w-full p-2 rounded text-left transition-colors ' + 
+                            (selectedCategory === category.slug ? 
+                             'bg-blue-100 text-blue-800' : 
+                             'hover:bg-gray-100')"
+                  >
+                    <span class="flex items-center">
+                      <div 
+                        [style.background-color]="category.color"
+                        class="w-3 h-3 rounded-full mr-3"
+                      ></div>
+                      {{ category.name }}
+                    </span>
+                    <span class="text-sm text-gray-500">{{ category.postCount }}</span>
+                  </button>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Popular Tags -->
+          @if (tags.length > 0) {
+            <div class="bg-white rounded-lg shadow-md p-6">
+              <h3 class="text-lg font-bold text-gray-800 mb-4">Tags Populares</h3>
+              <div class="flex flex-wrap gap-2">
+                @for (tag of tags.slice(0, 15); track trackByTagId($index, tag)) {
+                  <button
+                    (click)="onTagFilter(tag.slug)"
+                    [class]="'text-sm px-3 py-1 rounded-full transition-colors ' + 
+                            (selectedTag === tag.slug ? 
+                             'bg-blue-600 text-white' : 
+                             'bg-gray-100 text-gray-700 hover:bg-gray-200')"
+                  >
+                    {{ tag.name }}
+                  </button>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- About -->
+          <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Sobre el Blog</h3>
+            <p class="text-gray-600 text-sm mb-4">
+              Comparto mi experiencia en desarrollo web, tutoriales prácticos y las últimas tendencias en tecnología.
+            </p>
+            <div class="flex items-center">
+              <img 
+                src="/assets/profcafe.png" 
+                alt="Janier Hernández" 
+                class="w-12 h-12 rounded-full mr-4"
+              >
+              <div>
+                <h4 class="font-medium text-gray-800">Janier Hernández</h4>
+                <p class="text-sm text-gray-600">Desarrollador Full Stack</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </aside>
+
+    </div>
+  </div>
+</div>

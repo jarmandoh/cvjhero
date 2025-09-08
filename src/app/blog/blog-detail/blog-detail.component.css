@@ -1,0 +1,223 @@
+/* Blog Detail Component Styles */
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Prose styling for article content */
+.prose {
+  color: #374151;
+  line-height: 1.75;
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  color: #111827;
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.prose h1 {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+}
+
+.prose h2 {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+.prose h3 {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.prose h4 {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.prose p {
+  margin-bottom: 1.5rem;
+}
+
+.prose a {
+  color: #2563eb;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.prose a:hover {
+  color: #1d4ed8;
+}
+
+.prose strong {
+  font-weight: 700;
+  color: #111827;
+}
+
+.prose em {
+  font-style: italic;
+}
+
+.prose code {
+  background-color: #f3f4f6;
+  color: #e11d48;
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.875em;
+}
+
+.prose pre {
+  background-color: #1f2937;
+  color: #f9fafb;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+.prose pre code {
+  background-color: transparent;
+  color: inherit;
+  padding: 0;
+  border-radius: 0;
+}
+
+.prose blockquote {
+  border-left: 4px solid #e5e7eb;
+  padding-left: 1.5rem;
+  margin: 1.5rem 0;
+  font-style: italic;
+  color: #6b7280;
+}
+
+.prose ul,
+.prose ol {
+  margin: 1.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.prose li {
+  margin: 0.5rem 0;
+}
+
+.prose img {
+  border-radius: 0.5rem;
+  margin: 1.5rem 0;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+}
+
+.prose th,
+.prose td {
+  border: 1px solid #e5e7eb;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.prose th {
+  background-color: #f9fafb;
+  font-weight: 700;
+}
+
+.prose hr {
+  border: none;
+  height: 1px;
+  background-color: #e5e7eb;
+  margin: 2rem 0;
+}
+
+/* Smooth scroll for TOC links */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Share button hover effects */
+.share-btn {
+  transition: all 0.2s ease;
+}
+
+.share-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* Comment avatar placeholder */
+.comment-avatar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Sticky sidebar */
+.sticky {
+  position: sticky;
+  top: 2rem;
+}
+
+/* Reading progress bar (for future implementation) */
+.reading-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 3px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  z-index: 50;
+  transition: width 0.3s ease;
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .prose {
+    color: #000 !important;
+  }
+  
+  .prose a {
+    color: #000 !important;
+    text-decoration: none !important;
+  }
+}
+
+/* Dark mode support (for future implementation) */
+@media (prefers-color-scheme: dark) {
+  .dark-mode .prose {
+    color: #d1d5db;
+  }
+  
+  .dark-mode .prose h1,
+  .dark-mode .prose h2,
+  .dark-mode .prose h3,
+  .dark-mode .prose h4,
+  .dark-mode .prose h5,
+  .dark-mode .prose h6 {
+    color: #f9fafb;
+  }
+  
+  .dark-mode .prose code {
+    background-color: #374151;
+    color: #fbbf24;
+  }
+  
+  .dark-mode .prose blockquote {
+    border-left-color: #4b5563;
+    color: #9ca3af;
+  }
+}

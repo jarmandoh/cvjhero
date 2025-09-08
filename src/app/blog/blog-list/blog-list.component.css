@@ -1,0 +1,123 @@
+/* Blog List Component Styles */
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Custom scrollbar for sidebar */
+.sidebar-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track {
+  background-color: #f3f4f6;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background-color: #9ca3af;
+  border-radius: 9999px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: #6b7280;
+}
+
+/* Post card hover effects */
+.post-card {
+  transition: all 0.3s ease;
+}
+
+.post-card:hover {
+  transform: translateY(-2px);
+}
+
+/* Tag animation */
+.tag-pill {
+  transition: all 0.2s ease;
+}
+
+.tag-pill:hover {
+  transform: scale(1.05);
+}
+
+/* Loading skeleton */
+.skeleton {
+  animation: skeleton-loading 1s linear infinite alternate;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-color: hsl(200, 20%, 80%);
+  }
+  100% {
+    background-color: hsl(200, 20%, 95%);
+  }
+}
+
+/* Search input focus effect */
+.search-input:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Category color dots */
+.category-dot {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.8);
+}
+
+/* Featured post badge */
+.featured-badge {
+  background: linear-gradient(45deg, #fbbf24, #f59e0b);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Responsive grid improvements */
+@media (min-width: 768px) {
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+/* Dark mode support (for future implementation) */
+@media (prefers-color-scheme: dark) {
+  .dark-mode {
+    --bg-primary: #1f2937;
+    --bg-secondary: #374151;
+    --text-primary: #f9fafb;
+    --text-secondary: #d1d5db;
+    --border-color: #4b5563;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .post-card {
+    break-inside: avoid;
+  }
+}

@@ -1,0 +1,114 @@
+/* Layout principal */
+.admin-layout {
+  position: relative;
+  min-height: 100vh;
+}
+
+/* Header responsivo */
+.admin-header {
+  transition: all 0.3s ease;
+}
+
+/* Efectos de blur cuando el menú móvil está abierto */
+.content-blur {
+  filter: blur(2px);
+  transition: filter 0.3s ease;
+}
+
+/* Animaciones suaves para transiciones */
+.header-transition {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Mejoras de accesibilidad para botones */
+.mobile-menu-btn:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Hover effects mejorados */
+.mobile-menu-btn:hover {
+  transform: scale(1.05);
+  background-color: #f3f4f6;
+}
+
+/* Responsiveness mejorado */
+@media (max-width: 640px) {
+  .admin-header .user-info {
+    display: none;
+  }
+  
+  .admin-header .page-title {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-header {
+    padding: 0 1rem;
+  }
+  
+  .admin-header .page-title {
+    font-size: 1rem;
+  }
+  
+  .admin-header .badge {
+    display: none;
+  }
+}
+
+/* Animación de entrada para el header */
+.header-slide-in {
+  animation: slideInDown 0.3s ease-out;
+}
+
+@keyframes slideInDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Overlay mejorado */
+.mobile-overlay {
+  backdrop-filter: blur(4px);
+  transition: opacity 0.3s ease;
+}
+
+/* Estados de interacción para elementos táctiles */
+@media (hover: none) {
+  .mobile-menu-btn:active {
+    transform: scale(0.95);
+    background-color: #e5e7eb;
+  }
+  
+  .logout-btn:active {
+    transform: scale(0.95);
+  }
+}
+
+/* Mejoras de contraste para accesibilidad */
+.high-contrast .admin-header {
+  border-bottom: 2px solid #374151;
+}
+
+.high-contrast .mobile-menu-btn {
+  border: 1px solid #6b7280;
+}
+
+/* Z-index management */
+.header-layer {
+  z-index: 40;
+}
+
+.nav-layer {
+  z-index: 50;
+}
+
+.overlay-layer {
+  z-index: 45;
+}

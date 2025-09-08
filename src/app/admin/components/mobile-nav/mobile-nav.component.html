@@ -1,0 +1,85 @@
+<!-- Overlay backdrop -->
+<div 
+  *ngIf="isOpen" 
+  class="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden"
+  (click)="onBackdropClick()"
+></div>
+
+<!-- Mobile Navigation Sidebar -->
+<div 
+  class="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-xl transform transition-transform duration-300 ease-in-out lg:hidden"
+  [class.translate-x-0]="isOpen"
+  [class.-translate-x-full]="!isOpen"
+>
+  <!-- Header -->
+  <div class="flex items-center justify-between p-4 border-b border-gray-200">
+    <div class="flex items-center">
+      <h2 class="text-lg font-semibold text-gray-900">Admin Panel</h2>
+      <span class="ml-2 px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">CVJHero</span>
+    </div>
+    <button 
+      (click)="closeNav.emit()"
+      class="p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+      aria-label="Cerrar menú"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Navigation Items -->
+  <nav class="mt-4 px-4">
+    <div class="space-y-2">
+      <button
+        *ngFor="let item of navigationItems"
+        (click)="navigateToRoute(item.route)"
+        [class.bg-blue-50]="isActiveRoute(item.route)"
+        [class.border-blue-500]="isActiveRoute(item.route)"
+        [class.text-blue-700]="isActiveRoute(item.route)"
+        [class.bg-gray-50]="!isActiveRoute(item.route)"
+        [class.border-gray-200]="!isActiveRoute(item.route)"
+        [class.text-gray-700]="!isActiveRoute(item.route)"
+        class="w-full flex items-center px-3 py-3 text-left rounded-lg border transition-all duration-200 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700"
+      >
+        <div class="flex-shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="item.icon"></path>
+          </svg>
+        </div>
+        <div class="ml-3 flex-1">
+          <div class="text-sm font-medium">{{ item.title }}</div>
+          <div class="text-xs opacity-75 mt-0.5">{{ item.description }}</div>
+        </div>
+        <div class="flex-shrink-0" *ngIf="isActiveRoute(item.route)">
+          <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+        </div>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Quick Actions -->
+  <div class="mt-8 px-4">
+    <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">Acciones Rápidas</h3>
+    <div class="space-y-2">
+      <button
+        (click)="navigateToRoute('/')"
+        class="w-full flex items-center px-3 py-2 text-left rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+      >
+        <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+        </svg>
+        <span class="text-sm">Ver sitio web</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 bg-gray-50">
+    <div class="text-center">
+      <p class="text-xs text-gray-500">CVJHero Admin Panel</p>
+      <p class="text-xs text-gray-400 mt-1">© {{ currentYear }} Janier Hernández</p>
+    </div>
+  </div>
+</div>
+
