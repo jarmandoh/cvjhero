@@ -43,6 +43,13 @@ export const routes: Routes = [
         canActivate: [AuthGuard]
     },
     {
+        path: 'admin/chat', 
+        loadComponent() {
+            return import('./admin/chat-manager/chat-manager.component').then(m => m.ChatManagerComponent);
+        },
+        canActivate: [AuthGuard]
+    },
+    {
         path: 'admin', redirectTo: 'admin/dashboard', pathMatch: 'full'
     },
     {

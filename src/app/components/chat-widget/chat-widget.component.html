@@ -1,0 +1,218 @@
+<!-- Widget de Chat Flotante -->
+<div class="chat-widget-container">
+  <!-- Botón flotante del chat -->
+  @if (!isOpen) {
+    <button 
+      (click)="toggleWidget()"
+      class="chat-toggle-btn"
+      [class.has-notifications]="unreadCount > 0"
+      title="Abrir chat"
+    >
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 3.582-8 8-8s8 3.582 8 8z">
+        </path>
+      </svg>
+      
+      <!-- Contador de mensajes no leídos -->
+      @if (unreadCount > 0) {
+        <span class="notification-badge">
+          {{ unreadCount > 99 ? '99+' : unreadCount }}
+        </span>
+      }
+    </button>
+  }
+
+  <!-- Ventana del chat -->
+  @if (isOpen) {
+    <div class="chat-window">
+      <!-- Header del chat -->
+      <div class="chat-header">
+        <div class="flex items-center space-x-3">
+          <div class="avatar">
+            <img 
+              src="/assets/profcafe.png" 
+              alt="Janier Hernández"
+              class="w-8 h-8 rounded-full object-cover"
+            >
+          </div>
+          <div>
+            <h4 class="font-semibold text-white">Janier Hernández</h4>
+            <p class="text-sm text-blue-200">Desarrollador Full Stack</p>
+          </div>
+        </div>
+        
+        <div class="flex items-center space-x-2">
+          <!-- Botón de información del usuario -->
+          <button 
+            (click)="toggleUserForm()"
+            class="text-blue-200 hover:text-white transition-colors"
+            title="Mi información"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
+              </path>
+            </svg>
+          </button>
+          
+          <!-- Botón cerrar -->
+          <button 
+            (click)="closeWidget()"
+            class="text-blue-200 hover:text-white transition-colors"
+            title="Cerrar chat"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M6 18L18 6M6 6l12 12">
+              </path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Formulario de información del usuario -->
+      @if (showUserForm) {
+        <div class="user-info-form">
+          <form [formGroup]="userInfoForm" (ngSubmit)="saveUserInfo()">
+            <div class="space-y-3">
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Nombre</label>
+                <input 
+                  type="text" 
+                  formControlName="name"
+                  placeholder="Tu nombre"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Email (opcional)</label>
+                <input 
+                  type="email" 
+                  formControlName="email"
+                  placeholder="tu@email.com"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+              </div>
+              <div class="flex space-x-2">
+                <button 
+                  type="submit"
+                  [disabled]="userInfoForm.invalid"
+                  class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Guardar
+                </button>
+                <button 
+                  type="button"
+                  (click)="toggleUserForm()"
+                  class="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      }
+
+      <!-- Área de mensajes -->
+      <div class="chat-messages">
+        @for (message of messages; track message.id) {
+          <div 
+            class="message-wrapper"
+            [class.user-message]="isUserMessage(message)"
+            [class.bot-message]="isBotMessage(message)"
+            [class.admin-message]="isAdminMessage(message)"
+          >
+            <!-- Avatar para mensajes del bot/admin -->
+            @if (!isUserMessage(message)) {
+              <div class="message-avatar">
+                <img 
+                  src="/assets/profcafe.png" 
+                  alt="Avatar"
+                  class="w-8 h-8 rounded-full object-cover"
+                >
+              </div>
+            }
+
+            <div class="message-content">
+              <!-- Contenido del mensaje -->
+              <div class="message-bubble">
+                <p [innerHTML]="message.message"></p>
+                <span class="message-time">
+                  {{ getMessageTime(message.timestamp) }}
+                </span>
+              </div>
+
+              <!-- Respuestas rápidas -->
+              @if (hasQuickReplies(message)) {
+                <div class="quick-replies">
+                  @for (reply of getQuickReplies(message); track reply.id) {
+                    <button 
+                      (click)="handleQuickReply(reply)"
+                      class="quick-reply-btn"
+                    >
+                      {{ reply.text }}
+                    </button>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Indicador de "escribiendo" -->
+        @if (isTyping) {
+          <div class="typing-indicator">
+            <div class="message-avatar">
+              <img 
+                src="/assets/profcafe.png" 
+                alt="Avatar"
+                class="w-8 h-8 rounded-full object-cover"
+              >
+            </div>
+            <div class="typing-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Formulario de mensaje -->
+      <div class="chat-input">
+        <form [formGroup]="messageForm" (ngSubmit)="sendMessage()">
+          <div class="input-wrapper">
+            <textarea 
+              formControlName="message"
+              (keydown)="onKeyPress($event)"
+              placeholder="Escribe tu mensaje..."
+              rows="1"
+              class="message-input"
+            ></textarea>
+            <button 
+              type="submit"
+              [disabled]="messageForm.invalid"
+              class="send-btn"
+              title="Enviar mensaje"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8">
+                </path>
+              </svg>
+            </button>
+          </div>
+        </form>
+        
+        <!-- Información adicional -->
+        <div class="chat-footer">
+          <p class="text-xs text-gray-500 text-center">
+            Powered by CVJHero • Respuesta automática 🤖
+          </p>
+        </div>
+      </div>
+    </div>
+  }
+</div>

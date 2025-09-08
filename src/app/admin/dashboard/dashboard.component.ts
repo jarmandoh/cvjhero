@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { Inject, PLATFORM_ID } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../models/user.model';
@@ -23,12 +23,13 @@ interface QuickAction {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent implements OnInit {
   currentUser: User | null = null;
+  now = new Date(); // Para mostrar el año actual
   
   dashboardCards: DashboardCard[] = [
     {
@@ -57,11 +58,18 @@ export class DashboardComponent implements OnInit {
       value: '12 nuevos',
       icon: 'M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z',
       color: 'bg-orange-500',
-      route: '/admin/messages'
+      route: '/admin/chat'
     }
   ];
 
   quickActions: QuickAction[] = [
+    {
+      title: 'Gestión de Chat',
+      description: 'Administrar conversaciones y responder mensajes',
+      icon: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 3.582-8 8-8s8 3.582 8 8z',
+      route: '/admin/chat',
+      color: 'bg-blue-500'
+    },
     {
       title: 'Nuevo Proyecto',
       description: 'Agregar un proyecto al portafolio',

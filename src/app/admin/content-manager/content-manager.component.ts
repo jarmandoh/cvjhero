@@ -3,13 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ContentService } from '../../services/content.service';
 import { EditorComponent } from '../components/editor/editor.component';
-import { PreviewComponent } from '../components/preview/preview.component';
 import { MediaManagerComponent } from '../components/media-manager/media-manager.component';
 import { Project, Service } from '../../models/content.model';
 
 @Component({
   selector: 'app-content-manager',
-  imports: [CommonModule, ReactiveFormsModule, EditorComponent, PreviewComponent, MediaManagerComponent],
+  imports: [CommonModule, ReactiveFormsModule, EditorComponent, MediaManagerComponent],
   templateUrl: './content-manager.component.html',
   styleUrl: './content-manager.component.css'
 })
