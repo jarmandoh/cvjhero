@@ -24,6 +24,11 @@ export const routes: Routes = [
         }
     },
     {
+        path: 'agendar', loadComponent() {
+            return import('./pages/agendar/agendar.component').then(m => m.AgendarComponent);
+        }
+    },
+    {
         path: 'blog', loadComponent() {
             return import('./blog/blog-list/blog-list.component').then(m => m.BlogListComponent);
         }
