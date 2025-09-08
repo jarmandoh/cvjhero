@@ -1,9 +1,287 @@
 <section id="contact" class="container mx-auto px-6 py-16">
-  <h2 class="text-3xl font-bold text-blue-400 text-center">Contacto</h2>
-  <form class="max-w-lg mx-auto mt-8">
-    <input type="text" placeholder="Nombre" class="w-full bg-gray-700 text-white p-3 rounded-lg mb-4">
-    <input type="email" placeholder="Correo" class="w-full bg-gray-700 text-white p-3 rounded-lg mb-4">
-    <textarea placeholder="Mensaje" class="w-full bg-gray-700 text-white p-3 rounded-lg mb-4" rows="5"></textarea>
-    <button type="submit" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-300">Enviar Mensaje</button>
-  </form>
+  <div class="max-w-4xl mx-auto">
+    <h2 class="text-3xl font-bold text-blue-400 text-center mb-8">Contacto</h2>
+    
+    <!-- Información de contacto -->
+    <div class="grid md:grid-cols-2 gap-8 mb-8">
+      <div class="bg-gray-800 rounded-lg p-6">
+        <h3 class="text-xl font-semibold text-white mb-4">Hablemos sobre tu proyecto</h3>
+        <p class="text-gray-300 mb-6">
+          ¿Tienes una idea en mente? Me encantaría conocer más sobre tu proyecto y cómo puedo ayudarte a hacerlo realidad.
+        </p>
+        
+        <div class="space-y-4">
+          <div class="flex items-center text-gray-300">
+            <svg class="w-5 h-5 mr-3 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+            </svg>
+            <span>contact@cvjhero.com</span>
+          </div>
+          
+          <div class="flex items-center text-gray-300">
+            <svg class="w-5 h-5 mr-3 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span>Respuesta en 24-48 horas</span>
+          </div>
+          
+          <div class="flex items-center text-gray-300">
+            <svg class="w-5 h-5 mr-3 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            <span>Disponible para proyectos remotos</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formulario -->
+      <div class="bg-gray-800 rounded-lg p-6">
+        <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="space-y-4">
+          <!-- Nombre -->
+          <div>
+            <label for="name" class="block text-sm font-medium text-gray-300 mb-2">
+              Nombre completo *
+            </label>
+            <input
+              type="text"
+              id="name"
+              formControlName="name"
+              [class]="'w-full bg-gray-700 text-white p-3 rounded-lg border transition duration-300 ' + 
+                      (isFieldInvalid('name') ? 'border-red-500 focus:border-red-400' : 
+                       isFieldValid('name') ? 'border-green-500 focus:border-green-400' : 
+                       'border-gray-600 focus:border-blue-400')"
+              placeholder="Tu nombre completo"
+            >
+            @if (getFieldError('name')) {
+              <p class="text-red-400 text-sm mt-1">{{ getFieldError('name') }}</p>
+            }
+            @if (name?.valid && name?.touched) {
+              <p class="text-green-400 text-sm mt-1 flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                Nombre válido
+              </p>
+            }
+          </div>
+
+          <!-- Email -->
+          <div>
+            <label for="email" class="block text-sm font-medium text-gray-300 mb-2">
+              Correo electrónico *
+            </label>
+            <input
+              type="email"
+              id="email"
+              formControlName="email"
+              [class]="'w-full bg-gray-700 text-white p-3 rounded-lg border transition duration-300 ' + 
+                      (isFieldInvalid('email') ? 'border-red-500 focus:border-red-400' : 
+                       isFieldValid('email') ? 'border-green-500 focus:border-green-400' : 
+                       'border-gray-600 focus:border-blue-400')"
+              placeholder="tu@email.com"
+            >
+            @if (getFieldError('email')) {
+              <p class="text-red-400 text-sm mt-1">{{ getFieldError('email') }}</p>
+            }
+            @if (email?.valid && email?.touched) {
+              <p class="text-green-400 text-sm mt-1 flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                Email válido
+              </p>
+            }
+          </div>
+
+          <!-- Teléfono y Empresa (fila) -->
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label for="phone" class="block text-sm font-medium text-gray-300 mb-2">
+                Teléfono
+              </label>
+              <input
+                type="tel"
+                id="phone"
+                formControlName="phone"
+                [class]="'w-full bg-gray-700 text-white p-3 rounded-lg border transition duration-300 ' + 
+                        (isFieldInvalid('phone') ? 'border-red-500 focus:border-red-400' : 
+                         isFieldValid('phone') ? 'border-green-500 focus:border-green-400' : 
+                         'border-gray-600 focus:border-blue-400')"
+                placeholder="+1 234 567 8900"
+              >
+              @if (getFieldError('phone')) {
+                <p class="text-red-400 text-sm mt-1">{{ getFieldError('phone') }}</p>
+              }
+            </div>
+
+            <div>
+              <label for="company" class="block text-sm font-medium text-gray-300 mb-2">
+                Empresa
+              </label>
+              <input
+                type="text"
+                id="company"
+                formControlName="company"
+                [class]="'w-full bg-gray-700 text-white p-3 rounded-lg border transition duration-300 ' + 
+                        (isFieldInvalid('company') ? 'border-red-500 focus:border-red-400' : 
+                         isFieldValid('company') ? 'border-green-500 focus:border-green-400' : 
+                         'border-gray-600 focus:border-blue-400')"
+                placeholder="Tu empresa"
+              >
+            </div>
+          </div>
+
+          <!-- Servicio -->
+          <div>
+            <label for="service" class="block text-sm font-medium text-gray-300 mb-2">
+              Tipo de servicio
+            </label>
+            <select
+              id="service"
+              formControlName="service"
+              class="w-full bg-gray-700 text-white p-3 rounded-lg border border-gray-600 focus:border-blue-400 transition duration-300"
+            >
+              @for (option of serviceOptions; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Asunto -->
+          <div>
+            <label for="subject" class="block text-sm font-medium text-gray-300 mb-2">
+              Asunto *
+            </label>
+            <input
+              type="text"
+              id="subject"
+              formControlName="subject"
+              [class]="'w-full bg-gray-700 text-white p-3 rounded-lg border transition duration-300 ' + 
+                      (isFieldInvalid('subject') ? 'border-red-500 focus:border-red-400' : 
+                       isFieldValid('subject') ? 'border-green-500 focus:border-green-400' : 
+                       'border-gray-600 focus:border-blue-400')"
+              placeholder="¿En qué puedo ayudarte?"
+            >
+            <div class="flex justify-between items-center mt-1">
+              @if (getFieldError('subject')) {
+                <p class="text-red-400 text-sm">{{ getFieldError('subject') }}</p>
+              } @else {
+                <span></span>
+              }
+              <span class="text-gray-400 text-sm">
+                {{ getCharacterCount('subject') }}/{{ getMaxLength('subject') }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Mensaje -->
+          <div>
+            <label for="message" class="block text-sm font-medium text-gray-300 mb-2">
+              Mensaje *
+            </label>
+            <textarea
+              id="message"
+              formControlName="message"
+              rows="5"
+              [class]="'w-full bg-gray-700 text-white p-3 rounded-lg border transition duration-300 resize-none ' + 
+                      (isFieldInvalid('message') ? 'border-red-500 focus:border-red-400' : 
+                       isFieldValid('message') ? 'border-green-500 focus:border-green-400' : 
+                       'border-gray-600 focus:border-blue-400')"
+              placeholder="Cuéntame sobre tu proyecto, necesidades, presupuesto estimado, cronograma, etc."
+            ></textarea>
+            <div class="flex justify-between items-center mt-1">
+              @if (getFieldError('message')) {
+                <p class="text-red-400 text-sm">{{ getFieldError('message') }}</p>
+              } @else {
+                <span></span>
+              }
+              <span class="text-gray-400 text-sm">
+                {{ getCharacterCount('message') }}/{{ getMaxLength('message') }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Mensaje de estado -->
+          @if (submitMessage) {
+            <div [class]="'p-4 rounded-lg border ' + 
+                        (submitStatus === 'success' ? 
+                         'bg-green-900 border-green-500 text-green-300' : 
+                         'bg-red-900 border-red-500 text-red-300')">
+              <div class="flex items-center">
+                @if (submitStatus === 'success') {
+                  <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                } @else {
+                  <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                }
+                <span>{{ submitMessage }}</span>
+              </div>
+            </div>
+          }
+
+          <!-- Botón de envío -->
+          <button
+            type="submit"
+            [disabled]="contactForm.invalid || isSubmitting"
+            [class]="'w-full py-3 px-6 rounded-lg font-medium transition duration-300 flex items-center justify-center ' + 
+                    (contactForm.invalid || isSubmitting ? 
+                     'bg-gray-600 text-gray-400 cursor-not-allowed' : 
+                     'bg-blue-500 text-white hover:bg-blue-600 active:bg-blue-700')"
+          >
+            @if (isSubmitting) {
+              <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Enviando...
+            } @else {
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+              </svg>
+              Enviar Mensaje
+            }
+          </button>
+
+          <!-- Información adicional -->
+          <p class="text-gray-400 text-sm text-center">
+            Al enviar este formulario, recibirás una confirmación automática por email.
+            <br>
+            Respondo personalmente a todos los mensajes en un plazo de 24-48 horas.
+          </p>
+        </form>
+      </div>
+    </div>
+
+    <!-- Métodos alternativos de contacto -->
+    <div class="bg-gray-800 rounded-lg p-6 text-center">
+      <h3 class="text-lg font-semibold text-white mb-4">¿Prefieres contactarme directamente?</h3>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="mailto:contact@cvjhero.com" 
+           class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+          </svg>
+          Email Directo
+        </a>
+        <a href="#" 
+           class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+          </svg>
+          WhatsApp
+        </a>
+        <a href="#" 
+           class="inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300">
+          <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+          </svg>
+          LinkedIn
+        </a>
+      </div>
+    </div>
+  </div>
 </section>

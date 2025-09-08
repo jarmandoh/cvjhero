@@ -1,0 +1,467 @@
+<div class="bg-white rounded-lg shadow-lg">
+  <!-- Header -->
+  <div class="border-b border-gray-200 px-6 py-4">
+    <h2 class="text-2xl font-bold text-gray-800">Gestión de Email</h2>
+    <p class="text-gray-600 mt-1">Configura los servicios de email y plantillas para el formulario de contacto</p>
+  </div>
+
+  <!-- Mensaje de estado -->
+  @if (saveMessage) {
+    <div class="mx-6 mt-4">
+      <div [class]="'p-4 rounded-lg border ' + 
+                  (saveStatus === 'success' ? 
+                   'bg-green-50 border-green-200 text-green-800' : 
+                   'bg-red-50 border-red-200 text-red-800')">
+        <div class="flex items-center">
+          @if (saveStatus === 'success') {
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+          } @else {
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          }
+          <span>{{ saveMessage }}</span>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Tabs -->
+  <div class="border-b border-gray-200">
+    <nav class="flex px-6">
+      <button
+        (click)="setActiveTab('config')"
+        [class]="'py-4 px-6 font-medium text-sm border-b-2 transition-colors ' + 
+                (activeTab === 'config' ? 
+                 'border-blue-500 text-blue-600' : 
+                 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300')"
+      >
+        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        </svg>
+        Configuración
+      </button>
+      
+      <button
+        (click)="setActiveTab('autoresponder')"
+        [class]="'py-4 px-6 font-medium text-sm border-b-2 transition-colors ' + 
+                (activeTab === 'autoresponder' ? 
+                 'border-blue-500 text-blue-600' : 
+                 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300')"
+      >
+        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+        </svg>
+        Auto-responder
+      </button>
+      
+      <button
+        (click)="setActiveTab('templates')"
+        [class]="'py-4 px-6 font-medium text-sm border-b-2 transition-colors ' + 
+                (activeTab === 'templates' ? 
+                 'border-blue-500 text-blue-600' : 
+                 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300')"
+      >
+        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+        </svg>
+        Plantillas
+      </button>
+      
+      <button
+        (click)="setActiveTab('metrics')"
+        [class]="'py-4 px-6 font-medium text-sm border-b-2 transition-colors ' + 
+                (activeTab === 'metrics' ? 
+                 'border-blue-500 text-blue-600' : 
+                 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300')"
+      >
+        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+        </svg>
+        Métricas
+      </button>
+    </nav>
+  </div>
+
+  <!-- Contenido de las tabs -->
+  <div class="p-6">
+    
+    <!-- Tab: Configuración -->
+    @if (activeTab === 'config') {
+      <div>
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Configuración del Servicio de Email</h3>
+        
+        <form [formGroup]="configForm" (ngSubmit)="onSaveConfig()" class="space-y-6">
+          <!-- Proveedor -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Proveedor de Email</label>
+            <select formControlName="provider" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              @for (provider of emailProviders; track provider.value) {
+                <option [value]="provider.value">{{ provider.label }}</option>
+              }
+            </select>
+            <p class="text-sm text-gray-500 mt-1">Selecciona tu proveedor de servicios de email</p>
+          </div>
+
+          <!-- Service ID -->
+          <div>
+            <label for="serviceId" class="block text-sm font-medium text-gray-700 mb-2">Service ID *</label>
+            <input
+              type="text"
+              id="serviceId"
+              formControlName="serviceId"
+              [class]="'w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ' + 
+                      (isFieldInvalid(configForm, 'serviceId') ? 'border-red-300' : 'border-gray-300')"
+              placeholder="service_xxxxx"
+            >
+            @if (getFieldError(configForm, 'serviceId')) {
+              <p class="text-red-500 text-sm mt-1">{{ getFieldError(configForm, 'serviceId') }}</p>
+            }
+          </div>
+
+          <!-- Template ID -->
+          <div>
+            <label for="templateId" class="block text-sm font-medium text-gray-700 mb-2">Template ID *</label>
+            <input
+              type="text"
+              id="templateId"
+              formControlName="templateId"
+              [class]="'w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ' + 
+                      (isFieldInvalid(configForm, 'templateId') ? 'border-red-300' : 'border-gray-300')"
+              placeholder="template_xxxxx"
+            >
+            @if (getFieldError(configForm, 'templateId')) {
+              <p class="text-red-500 text-sm mt-1">{{ getFieldError(configForm, 'templateId') }}</p>
+            }
+          </div>
+
+          <!-- Public Key -->
+          <div>
+            <label for="publicKey" class="block text-sm font-medium text-gray-700 mb-2">Public Key *</label>
+            <input
+              type="text"
+              id="publicKey"
+              formControlName="publicKey"
+              [class]="'w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ' + 
+                      (isFieldInvalid(configForm, 'publicKey') ? 'border-red-300' : 'border-gray-300')"
+              placeholder="Tu clave pública"
+            >
+            @if (getFieldError(configForm, 'publicKey')) {
+              <p class="text-red-500 text-sm mt-1">{{ getFieldError(configForm, 'publicKey') }}</p>
+            }
+          </div>
+
+          <!-- Private Key (opcional) -->
+          <div>
+            <label for="privateKey" class="block text-sm font-medium text-gray-700 mb-2">Private Key (Opcional)</label>
+            <input
+              type="password"
+              id="privateKey"
+              formControlName="privateKey"
+              class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Tu clave privada (opcional)"
+            >
+            <p class="text-sm text-gray-500 mt-1">Solo necesario para algunos proveedores</p>
+          </div>
+
+          <!-- From Email -->
+          <div>
+            <label for="fromEmail" class="block text-sm font-medium text-gray-700 mb-2">Email de origen *</label>
+            <input
+              type="email"
+              id="fromEmail"
+              formControlName="fromEmail"
+              [class]="'w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ' + 
+                      (isFieldInvalid(configForm, 'fromEmail') ? 'border-red-300' : 'border-gray-300')"
+              placeholder="contact@cvjhero.com"
+            >
+            @if (getFieldError(configForm, 'fromEmail')) {
+              <p class="text-red-500 text-sm mt-1">{{ getFieldError(configForm, 'fromEmail') }}</p>
+            }
+          </div>
+
+          <!-- From Name -->
+          <div>
+            <label for="fromName" class="block text-sm font-medium text-gray-700 mb-2">Nombre del remitente *</label>
+            <input
+              type="text"
+              id="fromName"
+              formControlName="fromName"
+              [class]="'w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ' + 
+                      (isFieldInvalid(configForm, 'fromName') ? 'border-red-300' : 'border-gray-300')"
+              placeholder="Janier Hernández - CVJHero"
+            >
+            @if (getFieldError(configForm, 'fromName')) {
+              <p class="text-red-500 text-sm mt-1">{{ getFieldError(configForm, 'fromName') }}</p>
+            }
+          </div>
+
+          <!-- Reply To -->
+          <div>
+            <label for="replyTo" class="block text-sm font-medium text-gray-700 mb-2">Email de respuesta *</label>
+            <input
+              type="email"
+              id="replyTo"
+              formControlName="replyTo"
+              [class]="'w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ' + 
+                      (isFieldInvalid(configForm, 'replyTo') ? 'border-red-300' : 'border-gray-300')"
+              placeholder="contact@cvjhero.com"
+            >
+            @if (getFieldError(configForm, 'replyTo')) {
+              <p class="text-red-500 text-sm mt-1">{{ getFieldError(configForm, 'replyTo') }}</p>
+            }
+          </div>
+
+          <!-- Botones -->
+          <div class="flex space-x-4">
+            <button
+              type="submit"
+              [disabled]="configForm.invalid || isLoading"
+              [class]="'px-6 py-3 rounded-lg font-medium transition-colors ' + 
+                      (configForm.invalid || isLoading ? 
+                       'bg-gray-300 text-gray-500 cursor-not-allowed' : 
+                       'bg-blue-600 text-white hover:bg-blue-700')"
+            >
+              @if (isLoading) {
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              }
+              Guardar Configuración
+            </button>
+
+            <button
+              type="button"
+              (click)="onTestConfiguration()"
+              [disabled]="configForm.invalid || isLoading"
+              class="px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed transition-colors"
+            >
+              Enviar Prueba
+            </button>
+          </div>
+        </form>
+      </div>
+    }
+
+    <!-- Tab: Auto-responder -->
+    @if (activeTab === 'autoresponder') {
+      <div>
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Configuración de Auto-responder</h3>
+        
+        <form [formGroup]="autoResponderForm" (ngSubmit)="onSaveAutoResponder()" class="space-y-6">
+          <!-- Habilitar auto-responder -->
+          <div class="flex items-center">
+            <input
+              type="checkbox"
+              id="enabled"
+              formControlName="enabled"
+              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            >
+            <label for="enabled" class="ml-2 block text-sm text-gray-700">
+              Habilitar respuesta automática
+            </label>
+          </div>
+
+          @if (autoResponderEnabled?.value) {
+            <!-- Retraso -->
+            <div>
+              <label for="delay" class="block text-sm font-medium text-gray-700 mb-2">Retraso (minutos)</label>
+              <input
+                type="number"
+                id="delay"
+                formControlName="delay"
+                min="0"
+                max="60"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="5"
+              >
+              <p class="text-sm text-gray-500 mt-1">Tiempo de espera antes de enviar la respuesta automática</p>
+            </div>
+
+            <!-- Asunto -->
+            <div>
+              <label for="subject" class="block text-sm font-medium text-gray-700 mb-2">Asunto del email *</label>
+              <input
+                type="text"
+                id="subject"
+                formControlName="subject"
+                [class]="'w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ' + 
+                        (isFieldInvalid(autoResponderForm, 'subject') ? 'border-red-300' : 'border-gray-300')"
+                placeholder="Gracias por contactar conmigo"
+              >
+              @if (getFieldError(autoResponderForm, 'subject')) {
+                <p class="text-red-500 text-sm mt-1">{{ getFieldError(autoResponderForm, 'subject') }}</p>
+              }
+            </div>
+
+            <!-- Mensaje -->
+            <div>
+              <label for="message" class="block text-sm font-medium text-gray-700 mb-2">Mensaje *</label>
+              <textarea
+                id="message"
+                formControlName="message"
+                rows="6"
+                [class]="'w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ' + 
+                        (isFieldInvalid(autoResponderForm, 'message') ? 'border-red-300' : 'border-gray-300')"
+                placeholder="He recibido tu mensaje y me pondré en contacto contigo pronto..."
+              ></textarea>
+              @if (getFieldError(autoResponderForm, 'message')) {
+                <p class="text-red-500 text-sm mt-1">{{ getFieldError(autoResponderForm, 'message') }}</p>
+              }
+              <p class="text-sm text-gray-500 mt-1">Puedes usar variables como: nombre, email, mensaje</p>
+            </div>
+          }
+
+          <!-- Botón guardar -->
+          <div>
+            <button
+              type="submit"
+              [disabled]="autoResponderForm.invalid || isLoading"
+              [class]="'px-6 py-3 rounded-lg font-medium transition-colors ' + 
+                      (autoResponderForm.invalid || isLoading ? 
+                       'bg-gray-300 text-gray-500 cursor-not-allowed' : 
+                       'bg-blue-600 text-white hover:bg-blue-700')"
+            >
+              @if (isLoading) {
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              }
+              Guardar Auto-responder
+            </button>
+          </div>
+        </form>
+      </div>
+    }
+
+    <!-- Tab: Plantillas -->
+    @if (activeTab === 'templates') {
+      <div>
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Plantillas de Email</h3>
+        
+        <div class="space-y-4">
+          @for (template of emailTemplates; track template.id) {
+            <div class="border border-gray-200 rounded-lg p-4">
+              <div class="flex justify-between items-start">
+                <div>
+                  <h4 class="font-medium text-gray-800">{{ template.name }}</h4>
+                  <p class="text-sm text-gray-600 mt-1">{{ template.subject }}</p>
+                  <div class="mt-2">
+                    <span class="text-xs text-gray-500">Variables disponibles:</span>
+                    @for (variable of template.variables; track variable) {
+                      <span class="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded ml-1">
+                        {{ '{{' + variable + '}}' }}
+                      </span>
+                    }
+                  </div>
+                </div>
+                <div class="flex space-x-2">
+                  <button class="text-blue-600 hover:text-blue-800 text-sm">Editar</button>
+                  <button class="text-green-600 hover:text-green-800 text-sm">Vista previa</button>
+                </div>
+              </div>
+            </div>
+          } @empty {
+            <div class="text-center py-8">
+              <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+              </svg>
+              <h3 class="mt-2 text-sm font-medium text-gray-900">No hay plantillas</h3>
+              <p class="mt-1 text-sm text-gray-500">Crea tu primera plantilla de email.</p>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Tab: Métricas -->
+    @if (activeTab === 'metrics') {
+      <div>
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Métricas de Email</h3>
+        
+        <!-- Estadísticas principales -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div class="flex items-center">
+              <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+              </svg>
+              <div class="ml-3">
+                <p class="text-sm font-medium text-blue-600">Enviados</p>
+                <p class="text-2xl font-semibold text-blue-900">{{ emailMetrics.totalSent }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+            <div class="flex items-center">
+              <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <div class="ml-3">
+                <p class="text-sm font-medium text-green-600">Entregados</p>
+                <p class="text-2xl font-semibold text-green-900">{{ emailMetrics.totalDelivered }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <div class="flex items-center">
+              <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+              <div class="ml-3">
+                <p class="text-sm font-medium text-yellow-600">Abiertos</p>
+                <p class="text-2xl font-semibold text-yellow-900">{{ emailMetrics.totalOpened }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+            <div class="flex items-center">
+              <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+              </svg>
+              <div class="ml-3">
+                <p class="text-sm font-medium text-purple-600">Clicks</p>
+                <p class="text-2xl font-semibold text-purple-900">{{ emailMetrics.totalClicked }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tasas de conversión -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div class="text-center">
+            <p class="text-3xl font-bold text-green-600">{{ emailMetrics.openRate | number:'1.1-1' }}%</p>
+            <p class="text-sm text-gray-600">Tasa de apertura</p>
+          </div>
+          <div class="text-center">
+            <p class="text-3xl font-bold text-blue-600">{{ emailMetrics.clickRate | number:'1.1-1' }}%</p>
+            <p class="text-sm text-gray-600">Tasa de clicks</p>
+          </div>
+          <div class="text-center">
+            <p class="text-3xl font-bold text-red-600">{{ emailMetrics.bounceRate | number:'1.1-1' }}%</p>
+            <p class="text-sm text-gray-600">Tasa de rebote</p>
+          </div>
+        </div>
+
+        <!-- Acciones -->
+        <div class="border-t border-gray-200 pt-6">
+          <button
+            (click)="onResetMetrics()"
+            class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+          >
+            Resetear Métricas
+          </button>
+        </div>
+      </div>
+    }
+
+  </div>
+</div>

@@ -50,6 +50,13 @@ export const routes: Routes = [
         canActivate: [AuthGuard]
     },
     {
+        path: 'admin/email', 
+        loadComponent() {
+            return import('./admin/email-manager/email-manager.component').then(m => m.EmailManagerComponent);
+        },
+        canActivate: [AuthGuard]
+    },
+    {
         path: 'admin', redirectTo: 'admin/dashboard', pathMatch: 'full'
     },
     {
