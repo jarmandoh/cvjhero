@@ -257,7 +257,7 @@
     </div>
 
     <!-- Métodos alternativos de contacto -->
-    <div class="bg-gray-800 rounded-lg p-6 text-center">
+    <div class="bg-gray-800 rounded-lg p-6 text-center mb-8">
       <h3 class="text-lg font-semibold text-white mb-4">¿Prefieres contactarme directamente?</h3>
       <div class="flex flex-wrap justify-center gap-4">
         <a href="mailto:contact@cvjhero.com" 
@@ -281,6 +281,25 @@
           </svg>
           LinkedIn
         </a>
+      </div>
+    </div>
+
+    <!-- Newsletter Signup -->
+    <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-lg p-6 text-center">
+      <div class="max-w-xl mx-auto">
+        <h3 class="text-xl font-bold text-white mb-3">
+          🚀 Mantente al día con mis proyectos
+        </h3>
+        <p class="text-blue-100 mb-4 text-sm">
+          Suscríbete y recibe novedades sobre desarrollo web y contenido técnico.
+        </p>
+        <div class="max-w-sm mx-auto newsletter-contact">
+          <app-newsletter-signup 
+            variant="compact"
+            source="contact-form"
+            [showPreferences]="false">
+          </app-newsletter-signup>
+        </div>
       </div>
     </div>
   </div>

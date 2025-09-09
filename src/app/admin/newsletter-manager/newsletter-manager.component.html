@@ -1,0 +1,365 @@
+<div class="newsletter-manager">
+  <!-- Header -->
+  <div class="manager-header">
+    <h2>📧 Gestión de Newsletter</h2>
+    <p>Administra suscriptores, crea newsletters y revisa métricas</p>
+  </div>
+
+  <!-- Tabs Navigation -->
+  <div class="tabs-navigation">
+    <button 
+      class="tab-button"
+      [class.active]="activeTab === 'subscribers'"
+      (click)="setActiveTab('subscribers')"
+    >
+      👥 Suscriptores
+    </button>
+    <button 
+      class="tab-button"
+      [class.active]="activeTab === 'newsletters'"
+      (click)="setActiveTab('newsletters')"
+    >
+      📬 Newsletters
+    </button>
+    <button 
+      class="tab-button"
+      [class.active]="activeTab === 'templates'"
+      (click)="setActiveTab('templates')"
+    >
+      📄 Templates
+    </button>
+    <button 
+      class="tab-button"
+      [class.active]="activeTab === 'stats'"
+      (click)="setActiveTab('stats')"
+    >
+      📊 Estadísticas
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="loading-spinner"></div>
+    <p>Cargando datos...</p>
+  </div>
+
+  <!-- Subscribers Tab -->
+  <div *ngIf="activeTab === 'subscribers' && !isLoading" class="tab-content">
+    <div class="content-header">
+      <h3>Suscriptores</h3>
+      <div class="header-actions">
+        <button class="btn btn-secondary" (click)="exportSubscribers()">
+          📤 Exportar CSV
+        </button>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-section">
+      <div class="filter-group">
+        <input 
+          type="text" 
+          placeholder="Buscar por email o nombre..."
+          [(ngModel)]="subscriberFilter"
+          class="search-input"
+        />
+      </div>
+      <div class="filter-group">
+        <label class="checkbox-label">
+          <input 
+            type="checkbox" 
+            [(ngModel)]="activeOnly"
+          />
+          Solo activos
+        </label>
+      </div>
+    </div>
+
+    <!-- Subscribers Table -->
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Nombre</th>
+            <th>Fecha Suscripción</th>
+            <th>Estado</th>
+            <th>Frecuencia</th>
+            <th>Métricas</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let subscriber of filteredSubscribers">
+            <td>{{ subscriber.email }}</td>
+            <td>{{ subscriber.name || '-' }}</td>
+            <td>{{ formatDate(subscriber.subscriptionDate) }}</td>
+            <td>
+              <span 
+                class="status-badge"
+                [class.active]="subscriber.isActive"
+                [class.inactive]="!subscriber.isActive"
+              >
+                {{ subscriber.isActive ? 'Activo' : 'Inactivo' }}
+              </span>
+            </td>
+            <td>{{ subscriber.preferences.frequency | titlecase }}</td>
+            <td>
+              <div class="metrics">
+                <span>{{ subscriber.totalOpens }} aperturas</span>
+                <span>{{ subscriber.totalClicks }} clicks</span>
+              </div>
+            </td>
+            <td>
+              <button 
+                class="btn btn-small"
+                [class.btn-primary]="!subscriber.isActive"
+                [class.btn-danger]="subscriber.isActive"
+                (click)="toggleSubscriberStatus(subscriber)"
+              >
+                {{ subscriber.isActive ? 'Desuscribir' : 'Reactivar' }}
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="filteredSubscribers.length === 0">
+            <td colspan="7" class="no-data">No hay suscriptores que mostrar</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Newsletters Tab -->
+  <div *ngIf="activeTab === 'newsletters' && !isLoading" class="tab-content">
+    <div class="content-header">
+      <h3>Newsletters</h3>
+      <div class="header-actions">
+        <button class="btn btn-primary" (click)="createNewsletter()">
+          ➕ Crear Newsletter
+        </button>
+      </div>
+    </div>
+
+    <!-- Newsletters Grid -->
+    <div class="newsletters-grid">
+      <div 
+        *ngFor="let newsletter of newsletters" 
+        class="newsletter-card"
+      >
+        <div class="card-header">
+          <h4>{{ newsletter.title }}</h4>
+          <span 
+            class="status-badge"
+            [ngClass]="getStatusBadgeClass(newsletter.status)"
+          >
+            {{ getStatusText(newsletter.status) }}
+          </span>
+        </div>
+        
+        <div class="card-content">
+          <p><strong>Asunto:</strong> {{ newsletter.subject }}</p>
+          <p><strong>Creado:</strong> {{ formatDate(newsletter.createdDate) }}</p>
+          <p *ngIf="newsletter.sentDate"><strong>Enviado:</strong> {{ formatDate(newsletter.sentDate) }}</p>
+          <p><strong>Recipients:</strong> {{ newsletter.recipients.length }}</p>
+          
+          <div *ngIf="newsletter.status === 'sent'" class="metrics">
+            <span>📬 {{ newsletter.metrics.totalSent }} enviados</span>
+            <span>👀 {{ newsletter.metrics.totalOpened }} abiertos</span>
+            <span>🖱️ {{ newsletter.metrics.totalClicked }} clicks</span>
+          </div>
+        </div>
+        
+        <div class="card-actions">
+          <button 
+            class="btn btn-secondary btn-small"
+            (click)="editNewsletter(newsletter)"
+          >
+            ✏️ Editar
+          </button>
+          <button 
+            *ngIf="newsletter.status === 'draft'"
+            class="btn btn-primary btn-small"
+            (click)="sendNewsletter(newsletter)"
+          >
+            📤 Enviar
+          </button>
+        </div>
+      </div>
+      
+      <div *ngIf="newsletters.length === 0" class="no-data">
+        No hay newsletters creados aún
+      </div>
+    </div>
+  </div>
+
+  <!-- Templates Tab -->
+  <div *ngIf="activeTab === 'templates' && !isLoading" class="tab-content">
+    <div class="content-header">
+      <h3>Templates de Email</h3>
+      <div class="header-actions">
+        <button class="btn btn-primary" (click)="createTemplate()">
+          ➕ Crear Template
+        </button>
+      </div>
+    </div>
+
+    <!-- Templates Grid -->
+    <div class="templates-grid">
+      <div 
+        *ngFor="let template of templates" 
+        class="template-card"
+      >
+        <div class="card-header">
+          <h4>{{ template.name }}</h4>
+          <span *ngIf="template.isDefault" class="default-badge">Por defecto</span>
+        </div>
+        
+        <div class="card-content">
+          <p><strong>Asunto:</strong> {{ template.subject }}</p>
+          <p *ngIf="template.previewText"><strong>Preview:</strong> {{ template.previewText }}</p>
+          <p><strong>Variables:</strong> {{ template.variables.length }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Tab -->
+  <div *ngIf="activeTab === 'stats' && !isLoading" class="tab-content">
+    <div class="content-header">
+      <h3>Estadísticas</h3>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number">{{ stats.total || 0 }}</div>
+        <div class="stat-label">Total Suscriptores</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-number">{{ stats.active || 0 }}</div>
+        <div class="stat-label">Activos</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-number">{{ stats.recentSubscriptions || 0 }}</div>
+        <div class="stat-label">Nuevos (30 días)</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-number">{{ getSentNewslettersCount() }}</div>
+        <div class="stat-label">Newsletters Enviados</div>
+      </div>
+    </div>
+
+    <!-- Charts placeholder -->
+    <div class="charts-section">
+      <div class="chart-placeholder">
+        <h4>Suscripciones por Fuente</h4>
+        <div *ngFor="let source of ['website', 'contact-form', 'blog'] as sourceList" class="source-stat">
+          <span>{{ source | titlecase }}:</span>
+          <span>{{ stats.bySource?.[source] || 0 }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Newsletter Modal -->
+  <div *ngIf="showNewsletterModal" class="modal-overlay" (click)="showNewsletterModal = false">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ selectedNewsletter ? 'Editar' : 'Crear' }} Newsletter</h3>
+        <button class="modal-close" (click)="showNewsletterModal = false">✕</button>
+      </div>
+      
+      <form [formGroup]="newsletterForm" (ngSubmit)="saveNewsletter()">
+        <div class="form-group">
+          <label>Título</label>
+          <input type="text" formControlName="title" placeholder="Título del newsletter">
+        </div>
+        
+        <div class="form-group">
+          <label>Asunto del Email</label>
+          <input type="text" formControlName="subject" placeholder="Asunto que verán los suscriptores">
+        </div>
+        
+        <div class="form-group">
+          <label>Template</label>
+          <select formControlName="template">
+            <option *ngFor="let template of templates" [value]="template.id">
+              {{ template.name }}
+            </option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Contenido</label>
+          <textarea 
+            formControlName="content" 
+            rows="8"
+            placeholder="Contenido del newsletter..."
+          ></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label>Programar Envío (opcional)</label>
+          <input type="datetime-local" formControlName="scheduledDate">
+        </div>
+        
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" (click)="showNewsletterModal = false">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="newsletterForm.invalid">
+            {{ selectedNewsletter ? 'Actualizar' : 'Crear' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Template Modal -->
+  <div *ngIf="showTemplateModal" class="modal-overlay" (click)="showTemplateModal = false">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Crear Template</h3>
+        <button class="modal-close" (click)="showTemplateModal = false">✕</button>
+      </div>
+      
+      <form [formGroup]="templateForm" (ngSubmit)="saveTemplate()">
+        <div class="form-group">
+          <label>Nombre del Template</label>
+          <input type="text" formControlName="name" placeholder="Nombre descriptivo">
+        </div>
+        
+        <div class="form-group">
+          <label>Asunto por Defecto</label>
+          <input type="text" formControlName="subject" placeholder="Asunto del email">
+        </div>
+        
+        <div class="form-group">
+          <label>Texto de Preview</label>
+          <input type="text" formControlName="previewText" placeholder="Texto que aparece en el preview">
+        </div>
+        
+        <div class="form-group">
+          <label>HTML del Template</label>
+          <textarea 
+            formControlName="htmlContent" 
+            rows="10"
+            placeholder="HTML del template con variables como nombre, contenido, etc."
+          ></textarea>
+        </div>
+        
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" (click)="showTemplateModal = false">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="templateForm.invalid">
+            Crear Template
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

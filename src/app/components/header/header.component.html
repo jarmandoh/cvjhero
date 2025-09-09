@@ -1,10 +1,12 @@
-<header class="w-full px-4 lg:px-6 h-20 flex items-center shadow-md">
+<header class="w-full px-4 lg:px-6 h-20 flex items-center shadow-md relative">
 <div class="flex flex-1 items-center justify-between">
     <nav class="flex flex-col items-start space-x-4 lg:space-x-6" routerLink="['/']">
         <div class="text-2xl font-bold">Janier Hernández</div>
         <div class="hidden sm:flex text-sm text-muted-foreground">Web Developer</div>
     </nav>
-    <nav class="hidden sm:flex items-center space-x-4 lg:space-x-6">
+    
+    <!-- Navegación desktop (oculta en móvil) -->
+    <nav class="hidden md:flex items-center space-x-4 lg:space-x-6">
     <a [routerLink]="['/experiencia']" routerLinkActive="router-link-active"  class="text-md font-medium hover:underline underline-offset-4">
         Experiencias
     </a>
@@ -27,5 +29,41 @@
         Agendar Reunión
     </a>
     </nav>
+
+    <!-- Botón hamburguesa (solo visible en móvil) -->
+    <button 
+        class="md:hidden flex flex-col justify-center items-center w-8 h-8 border-none bg-transparent cursor-pointer"
+        (click)="toggleMenu()"
+        [attr.aria-expanded]="isMenuOpen"
+        aria-label="Menú de navegación">
+        <span class="hamburger-line" [class.active]="isMenuOpen"></span>
+        <span class="hamburger-line" [class.active]="isMenuOpen"></span>
+        <span class="hamburger-line" [class.active]="isMenuOpen"></span>
+    </button>
 </div>
+
+<!-- Menú móvil desplegable -->
+<nav class="mobile-menu" [class.active]="isMenuOpen">
+    <a [routerLink]="['/experiencia']" routerLinkActive="router-link-active" (click)="closeMenu()" class="mobile-menu-item">
+        Experiencias
+    </a>
+    <a [routerLink]="['/proyectos']" routerLinkActive="router-link-active" (click)="closeMenu()" class="mobile-menu-item">
+        Proyectos
+    </a>
+    <a [routerLink]="['/blog']" routerLinkActive="router-link-active" (click)="closeMenu()" class="mobile-menu-item">
+        Blog
+    </a>
+    <a [routerLink]="['/servicios']" routerLinkActive="router-link-active" (click)="closeMenu()" class="mobile-menu-item">
+        Servicios
+    </a>
+    <a [routerLink]="['/contacto']" routerLinkActive="router-link-active" (click)="closeMenu()" class="mobile-menu-item">
+        Contacto
+    </a>
+    <a [routerLink]="['/agendar']" routerLinkActive="router-link-active" (click)="closeMenu()" class="mobile-menu-item special">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+        </svg>
+        Agendar Reunión
+    </a>
+</nav>
 </header>

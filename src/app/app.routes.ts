@@ -63,6 +63,12 @@ export const routes: Routes = [
                 }
             },
             {
+                path: 'newsletter', 
+                loadComponent() {
+                    return import('./admin/newsletter-manager/newsletter-manager.component').then(m => m.NewsletterManagerComponent);
+                }
+            },
+            {
                 path: 'chat', 
                 loadComponent() {
                     return import('./admin/chat-manager/chat-manager.component').then(m => m.ChatManagerComponent);

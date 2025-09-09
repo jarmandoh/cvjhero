@@ -4,10 +4,11 @@ import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { EmailService } from '../../services/email.service';
 import { ContactFormData, EmailResponse } from '../../models/email.model';
+import { NewsletterSignupComponent } from '../../components/newsletter-signup/newsletter-signup.component';
 
 @Component({
   selector: 'app-contacto',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, NewsletterSignupComponent],
   templateUrl: './contacto.component.html',
   styleUrl: './contacto.component.css'
 })

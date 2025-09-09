@@ -1,0 +1,122 @@
+<div class="newsletter-signup" [ngClass]="'variant-' + variant">
+  <!-- Success Message -->
+  <div *ngIf="isSuccess" class="success-message">
+    <div class="success-content">
+      <svg class="success-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+      </svg>
+      <h3>¡Suscripción exitosa!</h3>
+      <p>Te has suscrito correctamente al newsletter. Pronto recibirás contenido interesante.</p>
+    </div>
+  </div>
+
+  <!-- Subscription Form -->
+  <div *ngIf="!isSuccess" class="subscription-form">
+    <div class="form-header">
+      <h3>📧 Suscríbete al Newsletter</h3>
+      <p>Recibe las últimas novedades sobre desarrollo web, proyectos y artículos técnicos.</p>
+    </div>
+
+    <form [formGroup]="subscriptionForm" (ngSubmit)="onSubmit()">
+      <!-- Email Field -->
+      <div class="form-group">
+        <label for="email">Email *</label>
+        <input
+          type="email"
+          id="email"
+          formControlName="email"
+          placeholder="tu@email.com"
+          [class.invalid]="isFieldInvalid('email')"
+        />
+        <div *ngIf="isFieldInvalid('email')" class="error-text">
+          {{ getFieldError('email') }}
+        </div>
+      </div>
+
+      <!-- Name Field -->
+      <div class="form-group">
+        <label for="name">Nombre (opcional)</label>
+        <input
+          type="text"
+          id="name"
+          formControlName="name"
+          placeholder="Tu nombre"
+        />
+      </div>
+
+      <!-- Preferences (if enabled) -->
+      <div *ngIf="showPreferences" class="preferences-section">
+        <h4>Preferencias de Suscripción</h4>
+        
+        <!-- Frequency -->
+        <div class="form-group">
+          <label for="frequency">Frecuencia</label>
+          <select id="frequency" formControlName="frequency">
+            <option value="weekly">Semanal</option>
+            <option value="biweekly">Quincenal</option>
+            <option value="monthly">Mensual</option>
+          </select>
+        </div>
+
+        <!-- Topics -->
+        <div class="form-group">
+          <label>Temas de Interés</label>
+          <div class="topics-grid">
+            <button
+              type="button"
+              *ngFor="let topic of ['desarrollo-web', 'angular', 'dotnet', 'tecnologia', 'proyectos']"
+              class="topic-button"
+              [class.selected]="isTopicSelected(topic)"
+              (click)="toggleTopic(topic)"
+            >
+              {{ topic | titlecase }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Language -->
+        <div class="form-group">
+          <label for="language">Idioma</label>
+          <select id="language" formControlName="language">
+            <option value="es">Español</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="errorMessage" class="error-message">
+        <svg class="error-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        {{ errorMessage }}
+      </div>
+
+      <!-- Submit Button -->
+      <button 
+        type="submit" 
+        class="submit-button"
+        [disabled]="isLoading || subscriptionForm.invalid"
+      >
+        <span *ngIf="!isLoading">Suscribirme</span>
+        <span *ngIf="isLoading" class="loading-content">
+          <svg class="loading-spinner" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" 
+                    stroke-dasharray="32" stroke-dashoffset="32">
+              <animate attributeName="stroke-dasharray" dur="2s" values="0 32;16 16;0 32;0 32" repeatCount="indefinite"/>
+              <animate attributeName="stroke-dashoffset" dur="2s" values="0;-16;-32;-32" repeatCount="indefinite"/>
+            </circle>
+          </svg>
+          Suscribiendo...
+        </span>
+      </button>
+
+      <!-- Privacy Notice -->
+      <p class="privacy-notice">
+        Al suscribirte, aceptas recibir emails de Janier Hernández. 
+        Puedes desuscribirte en cualquier momento. 
+        <a href="/privacy" target="_blank">Ver política de privacidad</a>
+      </p>
+    </form>
+  </div>
+</div>

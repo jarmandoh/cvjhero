@@ -13,3 +13,55 @@
   .animate-fade-in {
     animation: fadeIn 0.8s ease-out;
   }
+
+  /* Newsletter compact styles for contact page */
+  .newsletter-contact ::ng-deep .newsletter-signup {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+  }
+
+  .newsletter-contact ::ng-deep .form-header h3 {
+    color: white;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .newsletter-contact ::ng-deep .form-header p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.8rem;
+  }
+
+  .newsletter-contact ::ng-deep .form-group label {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.8rem;
+  }
+
+  .newsletter-contact ::ng-deep .form-group input {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #1f2937;
+  }
+
+  .newsletter-contact ::ng-deep .form-group input:focus {
+    background: white;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+
+  .newsletter-contact ::ng-deep .submit-button {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+  }
+
+  .newsletter-contact ::ng-deep .submit-button:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+
+  .newsletter-contact ::ng-deep .privacy-notice {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.7rem;
+  }

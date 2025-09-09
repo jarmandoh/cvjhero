@@ -1,3 +1,77 @@
 svg{
     fill: white;
 }
+
+.newsletter-footer {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  padding: 0.75rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.newsletter-footer app-newsletter-signup {
+  display: block;
+}
+
+/* Override newsletter styles for footer */
+.newsletter-footer ::ng-deep .newsletter-signup {
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
+.newsletter-footer ::ng-deep .form-header h3 {
+  color: white;
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+  font-weight: 500;
+}
+
+.newsletter-footer ::ng-deep .form-header p {
+  color: #d1d5db;
+  font-size: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.newsletter-footer ::ng-deep .form-group {
+  margin-bottom: 0.5rem;
+}
+
+.newsletter-footer ::ng-deep .form-group label {
+  color: #f3f4f6;
+  font-size: 0.75rem;
+  margin-bottom: 0.15rem;
+}
+
+.newsletter-footer ::ng-deep .form-group input {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.4rem 0.5rem;
+  font-size: 0.8rem;
+  border-radius: 4px;
+}
+
+.newsletter-footer ::ng-deep .form-group input:focus {
+  background: white;
+  border-color: #059669;
+  box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.2);
+}
+
+.newsletter-footer ::ng-deep .submit-button {
+  background: #059669;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.newsletter-footer ::ng-deep .submit-button:hover:not(:disabled) {
+  background: #047857;
+}
+
+.newsletter-footer ::ng-deep .privacy-notice {
+  color: #d1d5db;
+  font-size: 0.65rem;
+  margin-top: 0.5rem;
+}
