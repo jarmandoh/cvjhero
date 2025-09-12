@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Subject, takeUntil, combineLatest } from 'rxjs';
-import { BlogService } from '../../services/blog.service';
-import { BlogPost, BlogCategory, BlogTag, SearchResult, BlogFilters } from '../../models/blog.model';
+import { BlogService } from '../../../services/blog.service';
+import { BlogPost, BlogCategory, BlogTag, SearchResult, BlogFilters } from '../../../models/blog.model';
 
 @Component({
   selector: 'app-blog-list',

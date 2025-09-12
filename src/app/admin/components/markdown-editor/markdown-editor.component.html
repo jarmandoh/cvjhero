@@ -1,0 +1,221 @@
+<div class="markdown-editor" 
+     [class.fullscreen]="isFullscreen"
+     [class.readonly]="readonly">
+
+  <!-- Toolbar -->
+  @if (editorConfig.showToolbar && !readonly) {
+    <div class="editor-toolbar">
+      <div class="toolbar-left">
+        <!-- Format buttons -->
+        @for (item of toolbarItems; track item.id) {
+          @if (item.id === 'separator') {
+            <div class="toolbar-separator"></div>
+          } @else {
+            <button 
+              type="button"
+              class="toolbar-btn"
+              [title]="item.title"
+              (click)="insertSyntax(item.id)"
+            >
+              <i [class]="item.icon"></i>
+            </button>
+          }
+        }
+      </div>
+
+      <div class="toolbar-right">
+        <!-- View controls -->
+        <div class="view-controls">
+          <button 
+            type="button"
+            class="toolbar-btn"
+            [class.active]="!isPreviewMode && !isSplitView"
+            (click)="isPreviewMode = false; isSplitView = false"
+            title="Solo editor"
+          >
+            <i class="fas fa-edit"></i>
+          </button>
+          
+          <button 
+            type="button"
+            class="toolbar-btn"
+            [class.active]="isSplitView"
+            (click)="toggleSplitView()"
+            title="Vista dividida"
+          >
+            <i class="fas fa-columns"></i>
+          </button>
+          
+          <button 
+            type="button"
+            class="toolbar-btn"
+            [class.active]="isPreviewMode"
+            (click)="togglePreviewMode()"
+            title="Solo preview"
+          >
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+
+        <div class="toolbar-separator"></div>
+
+        <!-- Fullscreen toggle -->
+        <button 
+          type="button"
+          class="toolbar-btn"
+          [class.active]="isFullscreen"
+          (click)="toggleFullscreen()"
+          title="Pantalla completa"
+        >
+          <i [class]="isFullscreen ? 'fas fa-compress' : 'fas fa-expand'"></i>
+        </button>
+
+        <!-- Save button -->
+        <button 
+          type="button"
+          class="toolbar-btn save-btn"
+          [class.has-changes]="hasUnsavedChanges"
+          [disabled]="!hasUnsavedChanges || isAutoSaving"
+          (click)="saveContent()"
+          title="Guardar (Ctrl+S)"
+        >
+          @if (isAutoSaving) {
+            <i class="fas fa-spinner fa-spin"></i>
+          } @else {
+            <i class="fas fa-save"></i>
+          }
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Editor Content -->
+  <div class="editor-content" [style.height]="editorConfig.height">
+    
+    <!-- Editor pane -->
+    <div class="editor-pane" 
+         [class.hidden]="isPreviewMode"
+         [class.split]="isSplitView">
+      
+      <textarea
+        #textareaEditor
+        class="markdown-input"
+        [(ngModel)]="markdownContent"
+        (input)="onContentChange($event)"
+        [placeholder]="editorConfig.placeholder"
+        [readonly]="readonly"
+        spellcheck="false"
+        wrap="soft"
+      ></textarea>
+      
+      <!-- Editor status bar -->
+      @if (!readonly) {
+        <div class="editor-status">
+          <div class="status-left">
+            <span class="status-item">
+              <i class="fas fa-font"></i>
+              {{ getWordCount() }} palabras
+            </span>
+            <span class="status-item">
+              <i class="fas fa-hashtag"></i>
+              {{ getCharacterCount() }} caracteres
+            </span>
+            <span class="status-item">
+              <i class="fas fa-clock"></i>
+              ~{{ getReadingTime() }} min lectura
+            </span>
+          </div>
+          
+          <div class="status-right">
+            @if (hasUnsavedChanges) {
+              <span class="status-item unsaved">
+                <i class="fas fa-circle"></i>
+                Sin guardar
+              </span>
+            } @else if (isAutoSaving) {
+              <span class="status-item saving">
+                <i class="fas fa-spinner fa-spin"></i>
+                Guardando...
+              </span>
+            } @else {
+              <span class="status-item saved">
+                <i class="fas fa-check"></i>
+                Guardado
+              </span>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Preview pane -->
+    @if (editorConfig.showPreview && (isPreviewMode || isSplitView)) {
+      <div class="preview-pane"
+           [class.hidden]="!isPreviewMode && !isSplitView"
+           [class.split]="isSplitView">
+        
+        <div class="preview-header">
+          <h4>
+            <i class="fas fa-eye"></i>
+            Vista previa
+          </h4>
+        </div>
+        
+        <div class="preview-content" 
+             #previewContainer
+             [innerHTML]="htmlContent">
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Markdown cheatsheet (collapsible) -->
+  @if (!readonly && editorConfig.showToolbar) {
+    <details class="markdown-help">
+      <summary>
+        <i class="fas fa-question-circle"></i>
+        Ayuda de Markdown
+      </summary>
+      
+      <div class="help-content">
+        <div class="help-grid">
+          <div class="help-section">
+            <h5>Formato de texto</h5>
+            <ul>
+              <li><code>**negrita**</code> → <strong>negrita</strong></li>
+              <li><code>*cursiva*</code> → <em>cursiva</em></li>
+              <li><code>~~tachado~~</code> → <del>tachado</del></li>
+              <li><code>`código`</code> → <code>código</code></li>
+            </ul>
+          </div>
+          
+          <div class="help-section">
+            <h5>Títulos</h5>
+            <ul>
+              <li><code># Título 1</code></li>
+              <li><code>## Título 2</code></li>
+              <li><code>### Título 3</code></li>
+            </ul>
+          </div>
+          
+          <div class="help-section">
+            <h5>Enlaces e imágenes</h5>
+            <ul>
+              <li><code>[texto](url)</code> → enlace</li>
+              <li><code>![alt](url)</code> → imagen</li>
+            </ul>
+          </div>
+          
+          <div class="help-section">
+            <h5>Listas</h5>
+            <ul>
+              <li><code>- elemento</code> → lista</li>
+              <li><code>1. elemento</code> → numerada</li>
+              <li><code>- [ ] tarea</code> → checklist</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </details>
+  }
+</div>

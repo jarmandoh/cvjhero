@@ -1,0 +1,134 @@
+<div class="calendar-widget-container" [class.booking-mode]="viewMode === 'booking'" [class.admin-mode]="viewMode === 'admin'">
+  <!-- Header del calendario -->
+  <div class="calendar-header" *ngIf="viewMode === 'booking'">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900">Selecciona fecha y hora</h3>
+        <p class="text-sm text-gray-600" *ngIf="selectedAppointmentType">
+          {{ selectedAppointmentType.name }} - {{ selectedAppointmentType.duration }} minutos
+        </p>
+      </div>
+      
+      <div class="flex items-center space-x-2" *ngIf="selectedAppointmentType">
+        <div class="w-4 h-4 rounded" [style.background-color]="selectedAppointmentType.color"></div>
+        <span class="text-sm font-medium text-gray-700">{{ selectedAppointmentType.name }}</span>
+      </div>
+    </div>
+    
+    <!-- Leyenda para modo booking -->
+    <div class="flex flex-wrap gap-4 mb-4 p-3 bg-gray-50 rounded-lg">
+      <div class="flex items-center space-x-2">
+        <div class="w-3 h-3 bg-green-500 rounded"></div>
+        <span class="text-xs text-gray-600">Disponible</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <div class="w-3 h-3 bg-red-500 rounded"></div>
+        <span class="text-xs text-gray-600">Ocupado</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <div class="w-3 h-3 bg-blue-500 rounded"></div>
+        <span class="text-xs text-gray-600">Seleccionado</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin header -->
+  <div class="calendar-admin-header" *ngIf="viewMode === 'admin'">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-semibold text-gray-900">Gestión de Citas</h3>
+      
+      <div class="flex items-center space-x-2">
+        <button
+          (click)="refreshEvents()"
+          class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        >
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+          </svg>
+          Actualizar
+        </button>
+      </div>
+    </div>
+
+    <!-- Estadísticas rápidas -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+      <div class="bg-blue-50 p-3 rounded-lg">
+        <div class="text-blue-600 text-sm font-medium">Total Citas</div>
+        <div class="text-2xl font-bold text-blue-900">{{ appointments.length }}</div>
+      </div>
+      
+      <div class="bg-green-50 p-3 rounded-lg">
+        <div class="text-green-600 text-sm font-medium">Confirmadas</div>
+        <div class="text-2xl font-bold text-green-900">
+          {{ getConfirmedAppointments() }}
+        </div>
+      </div>
+      
+      <div class="bg-yellow-50 p-3 rounded-lg">
+        <div class="text-yellow-600 text-sm font-medium">Pendientes</div>
+        <div class="text-2xl font-bold text-yellow-900">
+          {{ getPendingAppointments() }}
+        </div>
+      </div>
+      
+      <div class="bg-purple-50 p-3 rounded-lg">
+        <div class="text-purple-600 text-sm font-medium">Esta Semana</div>
+        <div class="text-2xl font-bold text-purple-900">
+          {{ currentEvents.length }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading indicator -->
+  <div *ngIf="isLoading" class="flex items-center justify-center p-8">
+    <div class="inline-flex items-center space-x-2">
+      <svg class="animate-spin h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <span class="text-gray-600">Cargando calendario...</span>
+    </div>
+  </div>
+
+  <!-- Calendario principal -->
+  <div class="calendar-container" [class.hidden]="isLoading">
+    <full-calendar [options]="calendarOptions"></full-calendar>
+  </div>
+
+  <!-- Instrucciones para modo booking -->
+  <div *ngIf="viewMode === 'booking'" class="mt-4 p-4 bg-blue-50 rounded-lg">
+    <div class="flex items-start space-x-3">
+      <svg class="w-5 h-5 text-blue-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      <div>
+        <h4 class="text-sm font-medium text-blue-900 mb-1">Cómo agendar tu cita:</h4>
+        <ul class="text-xs text-blue-800 space-y-1">
+          <li>• Haz clic en el horario disponible que prefieras</li>
+          <li>• Los horarios en verde están disponibles</li>
+          <li>• Los horarios en rojo ya están ocupados</li>
+          <li>• Solo puedes agendar citas futuras</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Información adicional para admin -->
+  <div *ngIf="viewMode === 'admin'" class="mt-4 p-4 bg-gray-50 rounded-lg">
+    <div class="flex items-start space-x-3">
+      <svg class="w-5 h-5 text-gray-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
+      </svg>
+      <div>
+        <h4 class="text-sm font-medium text-gray-900 mb-1">Gestión de citas:</h4>
+        <ul class="text-xs text-gray-700 space-y-1">
+          <li>• Haz clic en una cita para ver opciones de gestión</li>
+          <li>• Arrastra las citas para reprogramarlas (próximamente)</li>
+          <li>• Haz clic en un espacio vacío para crear nueva cita</li>
+          <li>• Usa los filtros de vista para mejor organización</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

@@ -30,12 +30,12 @@ export const routes: Routes = [
     },
     {
         path: 'blog', loadComponent() {
-            return import('./blog/blog-list/blog-list.component').then(m => m.BlogListComponent);
+            return import('./pages/blog/blog-list/blog-list.component').then(m => m.BlogListComponent);
         }
     },
     {
         path: 'blog/:slug', loadComponent() {
-            return import('./blog/blog-detail/blog-detail.component').then(m => m.BlogDetailComponent);
+            return import('./pages/blog/blog-detail/blog-detail.component').then(m => m.BlogDetailComponent);
         }
     },
     {
@@ -78,6 +78,24 @@ export const routes: Routes = [
                 path: 'email', 
                 loadComponent() {
                     return import('./admin/email-manager/email-manager.component').then(m => m.EmailManagerComponent);
+                }
+            },
+            {
+                path: 'blog', 
+                loadComponent() {
+                    return import('./admin/blog-manager/blog-manager.component').then(m => m.BlogManagerComponent);
+                }
+            },
+            {
+                path: 'blog/new', 
+                loadComponent() {
+                    return import('./admin/blog-manager/blog-manager.component').then(m => m.BlogManagerComponent);
+                }
+            },
+            {
+                path: 'blog/edit/:id', 
+                loadComponent() {
+                    return import('./admin/blog-manager/blog-manager.component').then(m => m.BlogManagerComponent);
                 }
             },
             {

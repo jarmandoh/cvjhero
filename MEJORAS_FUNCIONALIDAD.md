@@ -127,12 +127,12 @@
 **Archivos creados/modificados:**
 - ✅ `src/app/models/blog.model.ts` - Modelos completos del blog
 - ✅ `src/app/services/blog.service.ts` - Servicio completo con todas las funcionalidades
-- ✅ `src/app/blog/blog-list/blog-list.component.ts` - Listado con filtros y búsqueda
-- ✅ `src/app/blog/blog-list/blog-list.component.html` - UI responsiva con sidebar
-- ✅ `src/app/blog/blog-list/blog-list.component.css` - Estilos optimizados
-- ✅ `src/app/blog/blog-detail/blog-detail.component.ts` - Vista detalle completa
-- ✅ `src/app/blog/blog-detail/blog-detail.component.html` - Template con comentarios y TOC
-- ✅ `src/app/blog/blog-detail/blog-detail.component.css` - Estilos prose para contenido
+- ✅ `src/app/pages/blog/blog-list/blog-list.component.ts` - Listado con filtros y búsqueda
+- ✅ `src/app/pages/blog/blog-list/blog-list.component.html` - UI responsiva con sidebar
+- ✅ `src/app/pages/blog/blog-list/blog-list.component.css` - Estilos optimizados
+- ✅ `src/app/pages/blog/blog-detail/blog-detail.component.ts` - Vista detalle completa
+- ✅ `src/app/pages/blog/blog-detail/blog-detail.component.html` - Template con comentarios y TOC
+- ✅ `src/app/pages/blog/blog-detail/blog-detail.component.css` - Estilos prose para contenido
 - ✅ `src/app/app.routes.ts` - Rutas del blog configuradas
 - ✅ `src/app/components/header/header.component.html` - Enlace en navegación
 

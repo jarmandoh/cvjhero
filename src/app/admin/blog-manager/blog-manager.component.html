@@ -1,0 +1,602 @@
+<!-- Blog Manager Dashboard -->
+<div class="blog-manager">
+  <!-- Header -->
+  <div class="manager-header">
+    <div class="header-left">
+      <h1 class="manager-title">
+        <i class="fas fa-blog"></i>
+        Gestión de Blog
+      </h1>
+      
+      <!-- Navigation tabs -->
+      <nav class="manager-nav">
+        <button 
+          class="nav-btn"
+          [class.active]="currentView === 'list'"
+          (click)="currentView = 'list'"
+        >
+          <i class="fas fa-list"></i>
+          Posts
+        </button>
+        
+        <button 
+          class="nav-btn"
+          [class.active]="currentView === 'create'"
+          (click)="createNewPost()"
+        >
+          <i class="fas fa-plus"></i>
+          Nuevo Post
+        </button>
+        
+        <button 
+          class="nav-btn"
+          [class.active]="currentView === 'settings'"
+          (click)="currentView = 'settings'"
+        >
+          <i class="fas fa-cog"></i>
+          Configuración
+        </button>
+      </nav>
+    </div>
+
+    <div class="header-right">
+      <!-- RSS & Sitemap -->
+      <div class="header-actions">
+        <button class="action-btn" (click)="generateRSSFeed()" title="Descargar RSS Feed">
+          <i class="fas fa-rss"></i>
+          RSS
+        </button>
+        
+        <button class="action-btn" (click)="generateSitemap()" title="Descargar Sitemap">
+          <i class="fas fa-sitemap"></i>
+          Sitemap
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Area -->
+  <div class="manager-content">
+    
+    <!-- Posts List View -->
+    @if (currentView === 'list') {
+      <div class="posts-manager">
+        <!-- Filters -->
+        <div class="filters-section">
+          <div class="filters-row">
+            <!-- Search -->
+            <div class="filter-group">
+              <label class="filter-label">Buscar</label>
+              <div class="search-input-wrapper">
+                <i class="fas fa-search search-icon"></i>
+                <input 
+                  type="text" 
+                  class="search-input"
+                  [(ngModel)]="searchTerm"
+                  placeholder="Buscar por título o contenido..."
+                >
+              </div>
+            </div>
+            
+            <!-- Status filter -->
+            <div class="filter-group">
+              <label class="filter-label">Estado</label>
+              <select class="filter-select" [(ngModel)]="selectedStatus">
+                <option value="all">Todos</option>
+                <option value="published">Publicados</option>
+                <option value="draft">Borradores</option>
+                <option value="scheduled">Programados</option>
+              </select>
+            </div>
+            
+            <!-- Category filter -->
+            <div class="filter-group">
+              <label class="filter-label">Categoría</label>
+              <select class="filter-select" [(ngModel)]="selectedCategory">
+                <option value="">Todas</option>
+                @for (category of categories; track category.id) {
+                  <option [value]="category.name">{{ category.name }}</option>
+                }
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Posts Table -->
+        <div class="posts-table-container">
+          @if (isLoading) {
+            <div class="loading-state">
+              <i class="fas fa-spinner fa-spin"></i>
+              <span>Cargando posts...</span>
+            </div>
+          } @else if (paginatedPosts.length === 0) {
+            <div class="empty-state">
+              <i class="fas fa-file-alt"></i>
+              <h3>No hay posts</h3>
+              <p>Comienza creando tu primer post de blog</p>
+              <button class="btn btn-primary" (click)="createNewPost()">
+                <i class="fas fa-plus"></i>
+                Crear Post
+              </button>
+            </div>
+          } @else {
+            <table class="posts-table">
+              <thead>
+                <tr>
+                  <th>Título</th>
+                  <th>Estado</th>
+                  <th>Categorías</th>
+                  <th>Fecha</th>
+                  <th>Vistas</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (post of paginatedPosts; track post.id) {
+                  <tr class="post-row">
+                    <td class="post-title-cell">
+                      <div class="post-title-info">
+                        <h4 class="post-title">{{ post.title }}</h4>
+                        <div class="post-meta">
+                          <span class="post-slug">/blog/{{ post.slug }}</span>
+                          @if (post.featured) {
+                            <span class="badge badge-featured">Destacado</span>
+                          }
+                          @if (post.sticky) {
+                            <span class="badge badge-sticky">Fijo</span>
+                          }
+                        </div>
+                      </div>
+                    </td>
+                    
+                    <td>
+                      <span class="status-badge" [class]="'status-' + post.status">
+                        @switch (post.status) {
+                          @case ('published') { 
+                            <i class="fas fa-check-circle"></i>
+                            Publicado 
+                          }
+                          @case ('draft') { 
+                            <i class="fas fa-edit"></i>
+                            Borrador 
+                          }
+                          @case ('scheduled') { 
+                            <i class="fas fa-clock"></i>
+                            Programado 
+                          }
+                        }
+                      </span>
+                    </td>
+                    
+                    <td>
+                      <div class="categories-cell">
+                        @for (category of post.categories.slice(0, 2); track category) {
+                          <span class="category-tag">{{ category }}</span>
+                        }
+                        @if (post.categories.length > 2) {
+                          <span class="category-more">+{{ post.categories.length - 2 }}</span>
+                        }
+                      </div>
+                    </td>
+                    
+                    <td class="date-cell">
+                      @if (post.publishedAt) {
+                        <div class="date-info">
+                          <span class="date">{{ post.publishedAt | date:'dd/MM/yyyy' }}</span>
+                          <span class="time">{{ post.publishedAt | date:'HH:mm' }}</span>
+                        </div>
+                      } @else {
+                        <span class="no-date">Sin publicar</span>
+                      }
+                    </td>
+                    
+                    <td class="stats-cell">
+                      <div class="post-stats">
+                        <span class="views">
+                          <i class="fas fa-eye"></i>
+                          {{ post.views }}
+                        </span>
+                      </div>
+                    </td>
+                    
+                    <td class="actions-cell">
+                      <div class="post-actions">
+                        <button 
+                          class="action-btn edit-btn"
+                          (click)="loadPost(post.id); currentView = 'edit'"
+                          title="Editar"
+                        >
+                          <i class="fas fa-edit"></i>
+                        </button>
+                        
+                        @if (post.status === 'published') {
+                          <a 
+                            [href]="'/blog/' + post.slug" 
+                            target="_blank"
+                            class="action-btn view-btn"
+                            title="Ver publicado"
+                          >
+                            <i class="fas fa-external-link-alt"></i>
+                          </a>
+                        }
+                        
+                        <button 
+                          class="action-btn delete-btn"
+                          (click)="deletePost(post.id)"
+                          title="Eliminar"
+                        >
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+
+            <!-- Pagination -->
+            @if (totalPages > 1) {
+              <div class="pagination">
+                <button 
+                  class="pagination-btn"
+                  [disabled]="currentPage === 1"
+                  (click)="currentPage = currentPage - 1"
+                >
+                  <i class="fas fa-chevron-left"></i>
+                  Anterior
+                </button>
+                
+                <span class="pagination-info">
+                  Página {{ currentPage }} de {{ totalPages }}
+                </span>
+                
+                <button 
+                  class="pagination-btn"
+                  [disabled]="currentPage === totalPages"
+                  (click)="currentPage = currentPage + 1"
+                >
+                  Siguiente
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+              </div>
+            }
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Post Editor View -->
+    @if (currentView === 'edit' || currentView === 'create') {
+      <div class="post-editor">
+        <!-- Editor Header -->
+        <div class="editor-header">
+          <div class="editor-header-left">
+            <button class="btn btn-secondary" (click)="currentView = 'list'">
+              <i class="fas fa-arrow-left"></i>
+              Volver a la lista
+            </button>
+            
+            <h2>{{ currentView === 'create' ? 'Crear Nuevo Post' : 'Editar Post' }}</h2>
+          </div>
+          
+          <div class="editor-header-right">
+            <button 
+              class="btn btn-primary"
+              [disabled]="postForm.invalid || isSaving"
+              (click)="savePost()"
+            >
+              @if (isSaving) {
+                <i class="fas fa-spinner fa-spin"></i>
+                Guardando...
+              } @else {
+                <i class="fas fa-save"></i>
+                {{ currentView === 'create' ? 'Crear Post' : 'Actualizar Post' }}
+              }
+            </button>
+          </div>
+        </div>
+
+        <!-- Post Form -->
+        <form [formGroup]="postForm" class="post-form">
+          <div class="form-layout">
+            <!-- Main Content -->
+            <div class="main-content">
+              <!-- Title -->
+              <div class="form-group">
+                <label class="form-label required">Título</label>
+                <input 
+                  type="text" 
+                  class="form-input"
+                  formControlName="title"
+                  placeholder="Título del post..."
+                >
+                @if (postForm.get('title')?.invalid && postForm.get('title')?.touched) {
+                  <div class="form-error">
+                    @if (postForm.get('title')?.errors?.['required']) {
+                      El título es requerido
+                    }
+                    @if (postForm.get('title')?.errors?.['minlength']) {
+                      El título debe tener al menos 3 caracteres
+                    }
+                  </div>
+                }
+              </div>
+
+              <!-- Slug -->
+              <div class="form-group">
+                <label class="form-label required">URL (slug)</label>
+                <input 
+                  type="text" 
+                  class="form-input"
+                  formControlName="slug"
+                  placeholder="url-del-post"
+                >
+                <div class="form-help">
+                  URL: /blog/{{ postForm.get('slug')?.value || 'url-del-post' }}
+                </div>
+                @if (postForm.get('slug')?.invalid && postForm.get('slug')?.touched) {
+                  <div class="form-error">
+                    Solo letras minúsculas, números y guiones
+                  </div>
+                }
+              </div>
+
+              <!-- Content Editor -->
+              <div class="form-group">
+                <label class="form-label required">Contenido</label>
+                <app-markdown-editor
+                  [value]="markdownContent"
+                  [config]="{
+                    showPreview: showPreview,
+                    showToolbar: true,
+                    autoSave: false,
+                    height: '500px',
+                    placeholder: 'Escribe el contenido de tu post en Markdown...'
+                  }"
+                  (valueChange)="onMarkdownChange($event)"
+                  (onSave)="onMarkdownSave($event)"
+                ></app-markdown-editor>
+                @if (postForm.get('content')?.invalid && postForm.get('content')?.touched) {
+                  <div class="form-error">
+                    El contenido debe tener al menos 50 caracteres
+                  </div>
+                }
+              </div>
+
+              <!-- Excerpt -->
+              <div class="form-group">
+                <label class="form-label">Extracto</label>
+                <textarea 
+                  class="form-textarea"
+                  formControlName="excerpt"
+                  rows="3"
+                  placeholder="Resumen breve del post (se genera automáticamente si se deja vacío)..."
+                ></textarea>
+                <div class="form-help">
+                  {{ postForm.get('excerpt')?.value?.length || 0 }}/300 caracteres
+                </div>
+              </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar-content">
+              <!-- Publishing Options -->
+              <div class="sidebar-section">
+                <h3 class="sidebar-title">Publicación</h3>
+                
+                <div class="form-group">
+                  <label class="form-label">Estado</label>
+                  <select class="form-select" formControlName="status">
+                    <option value="draft">Borrador</option>
+                    <option value="published">Publicado</option>
+                    <option value="scheduled">Programado</option>
+                  </select>
+                </div>
+
+                @if (postForm.get('status')?.value === 'published') {
+                  <div class="form-group">
+                    <label class="form-label">Fecha de publicación</label>
+                    <input 
+                      type="datetime-local" 
+                      class="form-input"
+                      formControlName="publishedAt"
+                    >
+                  </div>
+                }
+
+                @if (postForm.get('status')?.value === 'scheduled') {
+                  <div class="form-group">
+                    <label class="form-label">Programar para</label>
+                    <input 
+                      type="datetime-local" 
+                      class="form-input"
+                      formControlName="scheduledAt"
+                    >
+                  </div>
+                }
+
+                <div class="form-group">
+                  <label class="checkbox-label">
+                    <input type="checkbox" formControlName="featured">
+                    <span class="checkbox-custom"></span>
+                    Post destacado
+                  </label>
+                </div>
+
+                <div class="form-group">
+                  <label class="checkbox-label">
+                    <input type="checkbox" formControlName="sticky">
+                    <span class="checkbox-custom"></span>
+                    Post fijo (al inicio)
+                  </label>
+                </div>
+              </div>
+
+              <!-- Categories -->
+              <div class="sidebar-section">
+                <h3 class="sidebar-title">Categorías</h3>
+                <div class="categories-list">
+                  @for (category of categories; track category.id) {
+                    <label class="checkbox-label">
+                      <input 
+                        type="checkbox" 
+                        [value]="category.name"
+                        (change)="onCategoryChange($event, category.name)"
+                        [checked]="postForm.get('categories')?.value?.includes(category.name)"
+                      >
+                      <span class="checkbox-custom"></span>
+                      {{ category.name }}
+                      <span class="category-count">({{ category.postCount }})</span>
+                    </label>
+                  }
+                </div>
+              </div>
+
+              <!-- Tags -->
+              <div class="sidebar-section">
+                <h3 class="sidebar-title">Tags</h3>
+                <div class="tags-input">
+                  <input 
+                    type="text" 
+                    class="form-input"
+                    placeholder="Agregar tags separados por comas..."
+                    (keyup.enter)="addTag($event)"
+                  >
+                </div>
+                <div class="selected-tags">
+                  @for (tag of postForm.get('tags')?.value; track tag) {
+                    <span class="tag-item">
+                      {{ tag }}
+                      <button type="button" (click)="removeTag(tag)">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </span>
+                  }
+                </div>
+              </div>
+
+              <!-- Featured Image -->
+              <div class="sidebar-section">
+                <h3 class="sidebar-title">Imagen destacada</h3>
+                <div class="image-upload">
+                  @if (postForm.get('coverImage')?.value) {
+                    <div class="current-image">
+                      <img [src]="postForm.get('coverImage')?.value" alt="Imagen destacada">
+                      <button type="button" class="remove-image" (click)="postForm.patchValue({coverImage: ''})">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </div>
+                  } @else {
+                    <div class="upload-placeholder">
+                      <i class="fas fa-image"></i>
+                      <p>Sin imagen destacada</p>
+                      <button type="button" class="btn btn-sm btn-secondary">
+                        Subir imagen
+                      </button>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <!-- SEO -->
+              <div class="sidebar-section">
+                <h3 class="sidebar-title">SEO</h3>
+                <div formGroupName="seo">
+                  <div class="form-group">
+                    <label class="form-label">Meta título</label>
+                    <input 
+                      type="text" 
+                      class="form-input"
+                      formControlName="metaTitle"
+                      placeholder="Título para motores de búsqueda..."
+                    >
+                    <div class="form-help">
+                      {{ postForm.get('seo.metaTitle')?.value?.length || 0 }}/60 caracteres
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">Meta descripción</label>
+                    <textarea 
+                      class="form-textarea"
+                      formControlName="metaDescription"
+                      rows="3"
+                      placeholder="Descripción para motores de búsqueda..."
+                    ></textarea>
+                    <div class="form-help">
+                      {{ postForm.get('seo.metaDescription')?.value?.length || 0 }}/160 caracteres
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    }
+
+    <!-- Settings View -->
+    @if (currentView === 'settings') {
+      <div class="settings-panel">
+        <h2>Configuración del Blog</h2>
+        
+        <!-- Categories Management -->
+        <div class="settings-section">
+          <h3>Gestión de Categorías</h3>
+          
+          <form [formGroup]="categoryForm" (ngSubmit)="createCategory()" class="inline-form">
+            <input 
+              type="text" 
+              formControlName="name"
+              placeholder="Nombre de la categoría"
+              class="form-input"
+            >
+            <input 
+              type="text" 
+              formControlName="slug"
+              placeholder="URL slug"
+              class="form-input"
+            >
+            <input 
+              type="color" 
+              formControlName="color"
+              class="color-input"
+            >
+            <button type="submit" class="btn btn-primary">Crear</button>
+          </form>
+          
+          <div class="categories-list">
+            @for (category of categories; track category.id) {
+              <div class="category-item">
+                <span class="category-color" [style.background-color]="category.color"></span>
+                <span class="category-name">{{ category.name }}</span>
+                <span class="category-posts">{{ category.postCount }} posts</span>
+                <button class="btn btn-sm btn-danger">Eliminar</button>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- RSS Feed Settings -->
+        <div class="settings-section">
+          <h3>RSS Feed</h3>
+          <div class="rss-info">
+            <p><strong>URL del RSS:</strong> <code>{{ rssUrl }}</code></p>
+            <p><strong>URL del Sitemap:</strong> <code>{{ sitemapUrl }}</code></p>
+            
+            <div class="rss-actions">
+              <button class="btn btn-secondary" (click)="generateRSSFeed()">
+                <i class="fas fa-download"></i>
+                Descargar RSS
+              </button>
+              <button class="btn btn-secondary" (click)="generateSitemap()">
+                <i class="fas fa-download"></i>
+                Descargar Sitemap
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

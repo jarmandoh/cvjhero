@@ -15,11 +15,11 @@
     <!-- Tipos de reunión -->
     @if (!showWidget) {
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-        @for (meetingType of meetingTypes; track meetingType.id) {
+        @for (appointmentType of appointmentTypes; track appointmentType.id) {
           <div 
             class="meeting-card hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:-translate-y-1"
-            [class]="getBgColor(meetingType.color)"
-            (click)="selectMeetingType(meetingType.id)"
+            [class]="getBgColor(appointmentType.color)"
+            (click)="selectMeetingType(appointmentType.id)"
           >
             <div class="p-6">
               
@@ -29,11 +29,11 @@
                   <div class="flex-shrink-0">
                     <div 
                       class="w-12 h-12 rounded-lg flex items-center justify-center"
-                      [style.background-color]="getIconColor(meetingType.color) + '20'"
+                      [style.background-color]="getIconColor(appointmentType.color) + '20'"
                     >
                       <svg 
                         class="w-6 h-6" 
-                        [style.color]="getIconColor(meetingType.color)"
+                        [style.color]="getIconColor(appointmentType.color)"
                         fill="none" 
                         stroke="currentColor" 
                         viewBox="0 0 24 24"
@@ -42,65 +42,43 @@
                           stroke-linecap="round" 
                           stroke-linejoin="round" 
                           stroke-width="2" 
-                          [attr.d]="meetingType.icon"
+                          [attr.d]="appointmentType.icon"
                         ></path>
                       </svg>
                     </div>
                   </div>
                   <div>
                     <h3 class="text-xl font-semibold text-gray-900 mb-1">
-                      {{ meetingType.title }}
+                      {{ appointmentType.name }}
                     </h3>
                     <div class="flex items-center space-x-3 text-sm text-gray-500">
                       <span class="flex items-center">
                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
-                        {{ meetingType.duration }}
+                        {{ appointmentType.duration }} min
                       </span>
-                      @if (meetingType.price) {
+                      @if (appointmentType.price && appointmentType.price > 0) {
                         <span class="flex items-center text-green-600 font-semibold">
                           <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
                           </svg>
-                          {{ meetingType.price }}
+                          ${{ appointmentType.price }}
+                        </span>
+                      } @else {
+                        <span class="flex items-center text-green-600 font-semibold">
+                          Gratuito
                         </span>
                       }
                     </div>
                   </div>
                 </div>
-                
-                @if (meetingType.recommended) {
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                    </svg>
-                    Recomendado
-                  </span>
-                }
               </div>
 
               <!-- Descripción -->
               <p class="text-gray-600 mb-4">
-                {{ meetingType.description }}
+                {{ appointmentType.description }}
               </p>
-
-              <!-- Características -->
-              <div class="space-y-2 mb-6">
-                <h4 class="text-sm font-medium text-gray-900">
-                  Incluye:
-                </h4>
-                <ul class="space-y-1">
-                  @for (feature of meetingType.features; track feature) {
-                    <li class="flex items-center text-sm text-gray-600">
-                      <svg class="w-4 h-4 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                      </svg>
-                      {{ feature }}
-                    </li>
-                  }
-                </ul>
-              </div>
 
               <!-- Botón de selección -->
               <button 
@@ -231,13 +209,11 @@
           </button>
           
           <div class="p-6">
-            <app-calendly-widget
-              [meetingType]="selectedMeetingType"
-              [showPreForm]="true"
-              [inline]="false"
-              (bookingCompleted)="onBookingCompleted($event)"
-              (widgetClosed)="onWidgetClosed()"
-            ></app-calendly-widget>
+            <app-calendar-widget
+              [selectedAppointmentType]="selectedAppointmentType"
+              [viewMode]="'booking'"
+              (slotSelected)="onBookingCompleted($event)"
+            ></app-calendar-widget>
           </div>
         </div>
       </div>

@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 
-import { BlogService } from '../../services/blog.service';
-import { BlogPost, BlogComment } from '../../models/blog.model';
+import { BlogService } from '../../../services/blog.service';
+import { BlogPost, BlogComment } from '../../../models/blog.model';
 
 @Component({
   selector: 'app-blog-detail',

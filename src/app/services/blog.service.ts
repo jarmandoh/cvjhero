@@ -3,6 +3,18 @@ import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
 import { BlogPost, BlogCategory, BlogTag, BlogComment, BlogSettings, BlogStats, SearchResult, BlogFilters } from '../models/blog.model';
+import { marked } from 'marked';
+
+interface RSSFeedOptions {
+  title: string;
+  description: string;
+  link: string;
+  language: string;
+  managingEditor: string;
+  webMaster: string;
+  copyright: string;
+  maxItems?: number;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -27,9 +39,9 @@ export class BlogService {
   private defaultPosts: BlogPost[] = [
     {
       id: '1',
-      title: 'Introducción a Angular 17: Nuevas características y mejoras',
-      slug: 'introduccion-angular-17-nuevas-caracteristicas',
-      content: `# Introducción a Angular 17
+      title: 'Introducción a Angular 20: Nuevas características y mejoras',
+      slug: 'introduccion-angular-20-nuevas-caracteristicas',
+      content: `# Introducción a Angular 20
 
 Angular 20 marca un hito importante en la evolución del framework, introduciendo características revolucionarias que transforman la manera en que desarrollamos aplicaciones web.
 
@@ -67,8 +79,8 @@ export class MyComponent {}
 
 ## Conclusión
 
-Angular 17 representa un paso adelante significativo en términos de developer experience y performance.`,
-      excerpt: 'Descubre las nuevas características de Angular 17 que están revolucionando el desarrollo web.',
+Angular 20 representa un paso adelante significativo en términos de developer experience y performance.`,
+      excerpt: 'Descubre las nuevas características de Angular 20 que están revolucionando el desarrollo web.',
       author: {
         name: 'Janier Hernández',
         email: 'contact@cvjhero.com',
@@ -79,16 +91,16 @@ Angular 17 representa un paso adelante significativo en términos de developer e
       createdAt: new Date('2024-11-10'),
       updatedAt: new Date('2024-11-15'),
       categories: ['Angular', 'Frontend'],
-      tags: ['angular17', 'frontend', 'javascript', 'typescript'],
-      coverImage: '/assets/angular-17-cover.jpg',
+      tags: ['angular20', 'frontend', 'javascript', 'typescript'],
+      coverImage: '/assets/angular-20-cover.jpg',
       readingTime: 8,
       views: 1250,
       likes: 45,
       comments: 12,
       seo: {
-        metaTitle: 'Angular 17: Nuevas características y mejoras - Blog de Janier Hernández',
-        metaDescription: 'Descubre las revolucionarias características de Angular 17 incluyendo la nueva sintaxis de control flow y componentes standalone.',
-        keywords: ['Angular 17', 'frontend', 'javascript', 'typescript', 'desarrollo web']
+        metaTitle: 'Angular 20: Nuevas características y mejoras - Blog de Janier Hernández',
+        metaDescription: 'Descubre las revolucionarias características de Angular 20 incluyendo la nueva sintaxis de control flow y componentes standalone.',
+        keywords: ['Angular 20', 'frontend', 'javascript', 'typescript', 'desarrollo web']
       },
       featured: true,
       sticky: false
@@ -259,12 +271,12 @@ export class BlogService {
     { id: '1', name: 'Angular', slug: 'angular', description: 'Todo sobre Angular framework', color: '#dd0031', postCount: 1, createdAt: new Date() },
     { id: '2', name: 'Frontend', slug: 'frontend', description: 'Desarrollo frontend moderno', color: '#61dafb', postCount: 2, createdAt: new Date() },
     { id: '3', name: 'CSS', slug: 'css', description: 'Estilos y diseño web', color: '#1572b6', postCount: 1, createdAt: new Date() },
-    { id: '4', name: 'Full Stack', slug: 'full-stack', description: 'Desarrollo completo', color: '#68217a', postCount: 1, createdAt: new Date() },
+    { id: '4', name: 'Full Stack', slug: 'full-stack', description: 'Desarrollo completo', color: '#68220a', postCount: 1, createdAt: new Date() },
     { id: '5', name: 'Node.js', slug: 'nodejs', description: 'Backend con Node.js', color: '#339933', postCount: 1, createdAt: new Date() }
   ];
 
   private defaultTags: BlogTag[] = [
-    { id: '1', name: 'angular17', slug: 'angular17', postCount: 1, createdAt: new Date() },
+    { id: '1', name: 'angular20', slug: 'angular20', postCount: 1, createdAt: new Date() },
     { id: '2', name: 'frontend', slug: 'frontend', postCount: 2, createdAt: new Date() },
     { id: '3', name: 'javascript', slug: 'javascript', postCount: 2, createdAt: new Date() },
     { id: '4', name: 'typescript', slug: 'typescript', postCount: 2, createdAt: new Date() },
@@ -284,7 +296,7 @@ export class BlogService {
         name: 'María García',
         email: 'maria.garcia@example.com'
       },
-      content: '¡Excelente artículo! Angular 17 realmente ha mejorado mucho la experiencia de desarrollo.',
+      content: '¡Excelente artículo! Angular 20 realmente ha mejorado mucho la experiencia de desarrollo.',
       status: 'approved',
       createdAt: new Date('2024-01-15'),
       updatedAt: new Date('2024-01-15'),
@@ -299,7 +311,7 @@ export class BlogService {
         email: 'contact@cvjhero.com',
         avatar: '/assets/profcafe.png'
       },
-      content: 'Gracias María! Me alegra que te haya gustado. Angular 17 definitivamente marca un antes y después.',
+      content: 'Gracias María! Me alegra que te haya gustado. Angular 20 definitivamente marca un antes y después.',
       status: 'approved',
       createdAt: new Date('2024-01-16'),
       updatedAt: new Date('2024-01-16'),
@@ -653,17 +665,6 @@ export class BlogService {
       .trim();
   }
 
-  private generateExcerpt(content: string, maxLength: number = 160): string {
-    const text = content.replace(/[#*`]/g, '').replace(/\n/g, ' ').trim();
-    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
-  }
-
-  private calculateReadingTime(content: string): number {
-    const wordsPerMinute = 200;
-    const words = content.split(/\s+/).length;
-    return Math.ceil(words / wordsPerMinute);
-  }
-
   // Blog settings
   getBlogSettings(): BlogSettings {
     if (!this.isBrowser()) {
@@ -756,6 +757,209 @@ export class BlogService {
       this.saveToStorage();
     }
     return of(undefined);
+  }
+
+  // Métodos para Markdown y RSS Feed
+
+  // Convertir markdown a HTML
+  markdownToHtml(markdownContent: string): string {
+    try {
+      return marked(markdownContent) as string;
+    } catch (error) {
+      console.error('Error converting markdown to HTML:', error);
+      return markdownContent;
+    }
+  }
+
+  // Extraer texto plano del markdown (para excerpt)
+  extractPlainText(markdownContent: string): string {
+    try {
+      const html = this.markdownToHtml(markdownContent);
+      // Remover tags HTML
+      const plainText = html.replace(/<[^>]*>/g, '');
+      // Limpiar espacios extra
+      return plainText.replace(/\s+/g, ' ').trim();
+    } catch (error) {
+      console.error('Error extracting plain text:', error);
+      return markdownContent;
+    }
+  }
+
+  // Generar excerpt automático
+  generateExcerpt(content: string, maxLength: number = 160): string {
+    const plainText = this.extractPlainText(content);
+    if (plainText.length <= maxLength) {
+      return plainText;
+    }
+    
+    // Encontrar el último espacio antes del límite
+    const truncated = plainText.substring(0, maxLength);
+    const lastSpace = truncated.lastIndexOf(' ');
+    
+    return lastSpace > 0 
+      ? truncated.substring(0, lastSpace) + '...'
+      : truncated + '...';
+  }
+
+  // Calcular tiempo de lectura
+  calculateReadingTime(content: string): number {
+    const plainText = this.extractPlainText(content);
+    const wordsPerMinute = 200;
+    const words = plainText.split(/\s+/).length;
+    return Math.ceil(words / wordsPerMinute);
+  }
+
+  // Generar RSS feed XML
+  generateRSSFeed(options: RSSFeedOptions): Observable<string> {
+    const posts = this.postsSubject.value
+      .filter(post => post.status === 'published')
+      .sort((a, b) => new Date(b.publishedAt!).getTime() - new Date(a.publishedAt!).getTime())
+      .slice(0, options.maxItems || 20);
+
+    const rssXml = this.buildRSSXML(posts, options);
+    return of(rssXml);
+  }
+
+  private buildRSSXML(posts: BlogPost[], options: RSSFeedOptions): string {
+    const now = new Date().toUTCString();
+    
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title><![CDATA[${options.title}]]></title>
+    <description><![CDATA[${options.description}]]></description>
+    <link>${options.link}</link>
+    <language>${options.language}</language>
+    <managingEditor>${options.managingEditor}</managingEditor>
+    <webMaster>${options.webMaster}</webMaster>
+    <copyright><![CDATA[${options.copyright}]]></copyright>
+    <lastBuildDate>${now}</lastBuildDate>
+    <pubDate>${now}</pubDate>
+    <generator>CVJHero Blog System</generator>`;
+
+    posts.forEach(post => {
+      const pubDate = new Date(post.publishedAt!).toUTCString();
+      const postUrl = `${options.link}/blog/${post.slug}`;
+      const htmlContent = this.markdownToHtml(post.content);
+      
+      xml += `
+    <item>
+      <title><![CDATA[${post.title}]]></title>
+      <description><![CDATA[${post.excerpt || this.generateExcerpt(post.content)}]]></description>
+      <content:encoded><![CDATA[${htmlContent}]]></content:encoded>
+      <link>${postUrl}</link>
+      <guid isPermaLink="true">${postUrl}</guid>
+      <pubDate>${pubDate}</pubDate>
+      <dc:creator><![CDATA[${post.author.name}]]></dc:creator>`;
+      
+      // Agregar categorías
+      post.categories.forEach(category => {
+        xml += `
+      <category><![CDATA[${category}]]></category>`;
+      });
+      
+      // Agregar tags como categorías
+      post.tags.forEach(tag => {
+        xml += `
+      <category><![CDATA[${tag}]]></category>`;
+      });
+      
+      xml += `
+    </item>`;
+    });
+
+    xml += `
+  </channel>
+</rss>`;
+
+    return xml;
+  }
+
+  // Generar sitemap XML para posts del blog
+  generateSitemap(baseUrl: string): Observable<string> {
+    const posts = this.postsSubject.value.filter(post => post.status === 'published');
+    
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`;
+    
+    posts.forEach(post => {
+      const lastmod = post.updatedAt.toISOString().split('T')[0];
+      xml += `
+  <url>
+    <loc>${baseUrl}/blog/${post.slug}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>`;
+    });
+    
+    xml += `
+</urlset>`;
+    
+    return of(xml);
+  }
+
+  // Validar markdown y verificar sintaxis
+  validateMarkdown(content: string): { isValid: boolean; errors: string[] } {
+    const errors: string[] = [];
+    
+    try {
+      // Intentar parsear el markdown
+      this.markdownToHtml(content);
+      
+      // Verificar enlaces rotos básicos
+      const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+      let match;
+      while ((match = linkRegex.exec(content)) !== null) {
+        const url = match[2];
+        if (!url || url.trim() === '' || url === '#') {
+          errors.push(`Enlace vacío o inválido: "${match[1]}"`);
+        }
+      }
+      
+      // Verificar imágenes sin alt text
+      const imageRegex = /!\[([^\]]*)\]\(([^)]+)\)/g;
+      while ((match = imageRegex.exec(content)) !== null) {
+        const altText = match[1];
+        if (!altText || altText.trim() === '') {
+          errors.push(`Imagen sin texto alternativo: ${match[2]}`);
+        }
+      }
+      
+      return { isValid: errors.length === 0, errors };
+      
+    } catch (error) {
+      errors.push(`Error de sintaxis Markdown: ${error}`);
+      return { isValid: false, errors };
+    }
+  }
+
+  // Buscar y reemplazar en contenido markdown
+  findAndReplace(content: string, search: string, replace: string, caseSensitive: boolean = false): string {
+    const flags = caseSensitive ? 'g' : 'gi';
+    const regex = new RegExp(search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), flags);
+    return content.replace(regex, replace);
+  }
+
+  // Generar tabla de contenidos desde markdown
+  generateTableOfContents(content: string): { id: string; text: string; level: number }[] {
+    const headingRegex = /^(#+)\s+(.+)$/gm;
+    const toc: { id: string; text: string; level: number }[] = [];
+    let match;
+    
+    while ((match = headingRegex.exec(content)) !== null) {
+      const level = match[1].length;
+      const text = match[2].trim();
+      const id = text.toLowerCase()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim();
+      
+      toc.push({ id, text, level });
+    }
+    
+    return toc;
   }
 
   private saveToStorage(): void {

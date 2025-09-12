@@ -1,32 +1,37 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CalendlyWidgetComponent } from '../../components/calendly-widget/calendly-widget.component';
-import { CalendarService } from '../../services/calendar.service';
-import { MeetingType } from '../../models/calendar.model';
+import { CalendarWidgetComponent } from '../../components/calendar-widget/calendar-widget.component';
+import { AppointmentService } from '../../services/appointment.service';
+import { AppointmentType } from '../../models/appointment.model';
 
 @Component({
   selector: 'app-agendar',
   standalone: true,
-  imports: [CommonModule, CalendlyWidgetComponent],
+  imports: [CommonModule, CalendarWidgetComponent],
   templateUrl: './agendar.component.html',
   styleUrls: ['./agendar.component.css']
 })
 export class AgendarComponent implements OnInit {
-  meetingTypes: MeetingType[] = [];
-  selectedMeetingType: string = '';
+  appointmentTypes: AppointmentType[] = [];
+  selectedAppointmentType: AppointmentType | null = null;
   showWidget = false;
   showModal = false;
 
-  constructor(private calendarService: CalendarService) {}
+  constructor(private appointmentService: AppointmentService) {}
 
   ngOnInit(): void {
-    this.meetingTypes = this.calendarService.getMeetingTypes();
+    this.appointmentService.getAppointmentTypes().subscribe(types => {
+      this.appointmentTypes = types;
+    });
   }
 
-  selectMeetingType(meetingType: string): void {
-    this.selectedMeetingType = meetingType;
-    this.showWidget = true;
-    this.showModal = true;
+  selectMeetingType(appointmentTypeId: string): void {
+    const type = this.appointmentTypes.find(t => t.id === appointmentTypeId);
+    if (type) {
+      this.selectedAppointmentType = type;
+      this.showWidget = true;
+      this.showModal = true;
+    }
   }
 
   onBookingCompleted(event: any): void {

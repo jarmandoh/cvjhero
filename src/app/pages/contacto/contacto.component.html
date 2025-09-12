@@ -39,26 +39,53 @@
       <div class="bg-gray-800 rounded-lg p-6">
         <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="space-y-4">
           <!-- Nombre -->
-          <div>
+          <div class="relative">
             <label for="name" class="block text-sm font-medium text-gray-300 mb-2">
               Nombre completo *
             </label>
-            <input
-              type="text"
-              id="name"
-              formControlName="name"
-              [class]="'w-full bg-gray-700 text-white p-3 rounded-lg border transition duration-300 ' + 
-                      (isFieldInvalid('name') ? 'border-red-500 focus:border-red-400' : 
-                       isFieldValid('name') ? 'border-green-500 focus:border-green-400' : 
-                       'border-gray-600 focus:border-blue-400')"
-              placeholder="Tu nombre completo"
-            >
+            <div class="relative">
+              <input
+                type="text"
+                id="name"
+                formControlName="name"
+                [class]="'w-full bg-gray-700 text-white p-3 pr-10 rounded-lg border transition-all duration-300 ' + 
+                        (isFieldInvalid('name') ? 'border-red-500 focus:border-red-400 focus:ring-2 focus:ring-red-400/20' : 
+                         isFieldValid('name') ? 'border-green-500 focus:border-green-400 focus:ring-2 focus:ring-green-400/20' : 
+                         isFieldValidating('name') ? 'border-blue-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20' :
+                         'border-gray-600 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20')"
+                placeholder="Tu nombre completo"
+              >
+              
+              <!-- Indicador visual -->
+              <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                @if (isFieldValidating('name')) {
+                  <svg class="animate-spin h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                } @else if (isFieldValid('name')) {
+                  <svg class="h-5 w-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                } @else if (isFieldInvalid('name')) {
+                  <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                }
+              </div>
+            </div>
+            
+            <!-- Mensaje de estado -->
             @if (getFieldError('name')) {
-              <p class="text-red-400 text-sm mt-1">{{ getFieldError('name') }}</p>
-            }
-            @if (name?.valid && name?.touched) {
-              <p class="text-green-400 text-sm mt-1 flex items-center">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <p class="text-red-400 text-sm mt-2 animate-fadeIn flex items-center">
+                <svg class="w-4 h-4 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                {{ getFieldError('name') }}
+              </p>
+            } @else if (isFieldValid('name')) {
+              <p class="text-green-400 text-sm mt-2 animate-fadeIn flex items-center">
+                <svg class="w-4 h-4 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
                 Nombre válido
@@ -67,26 +94,53 @@
           </div>
 
           <!-- Email -->
-          <div>
+          <div class="relative">
             <label for="email" class="block text-sm font-medium text-gray-300 mb-2">
               Correo electrónico *
             </label>
-            <input
-              type="email"
-              id="email"
-              formControlName="email"
-              [class]="'w-full bg-gray-700 text-white p-3 rounded-lg border transition duration-300 ' + 
-                      (isFieldInvalid('email') ? 'border-red-500 focus:border-red-400' : 
-                       isFieldValid('email') ? 'border-green-500 focus:border-green-400' : 
-                       'border-gray-600 focus:border-blue-400')"
-              placeholder="tu@email.com"
-            >
+            <div class="relative">
+              <input
+                type="email"
+                id="email"
+                formControlName="email"
+                [class]="'w-full bg-gray-700 text-white p-3 pr-10 rounded-lg border transition-all duration-300 ' + 
+                        (isFieldInvalid('email') ? 'border-red-500 focus:border-red-400 focus:ring-2 focus:ring-red-400/20' : 
+                         isFieldValid('email') ? 'border-green-500 focus:border-green-400 focus:ring-2 focus:ring-green-400/20' : 
+                         isFieldValidating('email') ? 'border-blue-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20' :
+                         'border-gray-600 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20')"
+                placeholder="tu@email.com"
+              >
+              
+              <!-- Indicador visual -->
+              <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                @if (isFieldValidating('email')) {
+                  <svg class="animate-spin h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                } @else if (isFieldValid('email')) {
+                  <svg class="h-5 w-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                } @else if (isFieldInvalid('email')) {
+                  <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                }
+              </div>
+            </div>
+            
+            <!-- Mensaje de estado -->
             @if (getFieldError('email')) {
-              <p class="text-red-400 text-sm mt-1">{{ getFieldError('email') }}</p>
-            }
-            @if (email?.valid && email?.touched) {
-              <p class="text-green-400 text-sm mt-1 flex items-center">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <p class="text-red-400 text-sm mt-2 animate-fadeIn flex items-center">
+                <svg class="w-4 h-4 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                {{ getFieldError('email') }}
+              </p>
+            } @else if (isFieldValid('email')) {
+              <p class="text-green-400 text-sm mt-2 animate-fadeIn flex items-center">
+                <svg class="w-4 h-4 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
                 Email válido
@@ -96,39 +150,112 @@
 
           <!-- Teléfono y Empresa (fila) -->
           <div class="grid md:grid-cols-2 gap-4">
-            <div>
+            <div class="relative">
               <label for="phone" class="block text-sm font-medium text-gray-300 mb-2">
                 Teléfono
               </label>
-              <input
-                type="tel"
-                id="phone"
-                formControlName="phone"
-                [class]="'w-full bg-gray-700 text-white p-3 rounded-lg border transition duration-300 ' + 
-                        (isFieldInvalid('phone') ? 'border-red-500 focus:border-red-400' : 
-                         isFieldValid('phone') ? 'border-green-500 focus:border-green-400' : 
-                         'border-gray-600 focus:border-blue-400')"
-                placeholder="+1 234 567 8900"
-              >
+              <div class="relative">
+                <input
+                  type="tel"
+                  id="phone"
+                  formControlName="phone"
+                  [class]="'w-full bg-gray-700 text-white p-3 pr-10 rounded-lg border transition-all duration-300 ' + 
+                          (isFieldInvalid('phone') ? 'border-red-500 focus:border-red-400 focus:ring-2 focus:ring-red-400/20' : 
+                           isFieldValid('phone') ? 'border-green-500 focus:border-green-400 focus:ring-2 focus:ring-green-400/20' : 
+                           'border-gray-600 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20')"
+                  placeholder="+1 234 567 8900"
+                  autocomplete="tel"
+                >
+                
+                <!-- Indicador visual -->
+                <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                  @if (isFieldValid('phone') && phone?.value) {
+                    <svg class="h-5 w-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                  } @else if (isFieldInvalid('phone')) {
+                    <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                  }
+                </div>
+              </div>
+              
+              <!-- Mensaje de error -->
               @if (getFieldError('phone')) {
-                <p class="text-red-400 text-sm mt-1">{{ getFieldError('phone') }}</p>
+                <p class="text-red-400 text-sm mt-2 animate-fadeIn flex items-center">
+                  <svg class="w-4 h-4 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  {{ getFieldError('phone') }}
+                </p>
+              } @else if (isFieldValid('phone') && phone?.value) {
+                <p class="text-green-400 text-sm mt-2 animate-fadeIn flex items-center">
+                  <svg class="w-4 h-4 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                  Teléfono válido
+                </p>
               }
             </div>
 
-            <div>
+            <div class="relative">
               <label for="company" class="block text-sm font-medium text-gray-300 mb-2">
                 Empresa
               </label>
-              <input
-                type="text"
-                id="company"
-                formControlName="company"
-                [class]="'w-full bg-gray-700 text-white p-3 rounded-lg border transition duration-300 ' + 
-                        (isFieldInvalid('company') ? 'border-red-500 focus:border-red-400' : 
-                         isFieldValid('company') ? 'border-green-500 focus:border-green-400' : 
-                         'border-gray-600 focus:border-blue-400')"
-                placeholder="Tu empresa"
-              >
+              <div class="relative">
+                <input
+                  type="text"
+                  id="company"
+                  formControlName="company"
+                  [class]="'w-full bg-gray-700 text-white p-3 pr-10 rounded-lg border transition-all duration-300 ' + 
+                          (isFieldInvalid('company') ? 'border-red-500 focus:border-red-400 focus:ring-2 focus:ring-red-400/20' : 
+                           isFieldValid('company') ? 'border-green-500 focus:border-green-400 focus:ring-2 focus:ring-green-400/20' : 
+                           'border-gray-600 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20')"
+                  placeholder="Tu empresa (opcional)"
+                  (focus)="onCompanyFocus()"
+                  (blur)="onCompanyBlur()"
+                  autocomplete="organization"
+                >
+                
+                <!-- Indicador visual -->
+                <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                  @if (isFieldValid('company') && company?.value) {
+                    <svg class="h-5 w-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                  } @else if (isFieldInvalid('company')) {
+                    <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                  }
+                </div>
+              </div>
+              
+              <!-- Sugerencias de autocompletado -->
+              @if (showCompanySuggestions) {
+                <div class="absolute z-10 w-full mt-1 bg-gray-700 border border-gray-600 rounded-lg shadow-lg max-h-40 overflow-y-auto">
+                  @for (suggestion of companySuggestions; track suggestion) {
+                    <button
+                      type="button"
+                      class="w-full text-left px-3 py-2 text-white hover:bg-gray-600 transition-colors duration-200 first:rounded-t-lg last:rounded-b-lg"
+                      (click)="selectCompanySuggestion(suggestion)"
+                    >
+                      {{ suggestion }}
+                    </button>
+                  }
+                </div>
+              }
+              
+              <!-- Mensaje de error -->
+              @if (getFieldError('company')) {
+                <p class="text-red-400 text-sm mt-2 animate-fadeIn flex items-center">
+                  <svg class="w-4 h-4 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  {{ getFieldError('company') }}
+                </p>
+              }
             </div>
           </div>
 
@@ -149,57 +276,168 @@
           </div>
 
           <!-- Asunto -->
-          <div>
+          <div class="relative">
             <label for="subject" class="block text-sm font-medium text-gray-300 mb-2">
               Asunto *
             </label>
-            <input
-              type="text"
-              id="subject"
-              formControlName="subject"
-              [class]="'w-full bg-gray-700 text-white p-3 rounded-lg border transition duration-300 ' + 
-                      (isFieldInvalid('subject') ? 'border-red-500 focus:border-red-400' : 
-                       isFieldValid('subject') ? 'border-green-500 focus:border-green-400' : 
-                       'border-gray-600 focus:border-blue-400')"
-              placeholder="¿En qué puedo ayudarte?"
-            >
-            <div class="flex justify-between items-center mt-1">
-              @if (getFieldError('subject')) {
-                <p class="text-red-400 text-sm">{{ getFieldError('subject') }}</p>
-              } @else {
-                <span></span>
-              }
-              <span class="text-gray-400 text-sm">
+            <div class="relative">
+              <input
+                type="text"
+                id="subject"
+                formControlName="subject"
+                [class]="'w-full bg-gray-700 text-white p-3 pr-10 rounded-lg border transition-all duration-300 ' + 
+                        (isFieldInvalid('subject') ? 'border-red-500 focus:border-red-400 focus:ring-2 focus:ring-red-400/20' : 
+                         isFieldValid('subject') ? 'border-green-500 focus:border-green-400 focus:ring-2 focus:ring-green-400/20' : 
+                         isFieldValidating('subject') ? 'border-blue-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20' :
+                         'border-gray-600 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20')"
+                placeholder="¿En qué puedo ayudarte?"
+              >
+              
+              <!-- Indicador visual -->
+              <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                @if (isFieldValidating('subject')) {
+                  <svg class="animate-spin h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                } @else if (isFieldValid('subject')) {
+                  <svg class="h-5 w-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                } @else if (isFieldInvalid('subject')) {
+                  <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                }
+              </div>
+            </div>
+            
+            <!-- Mensaje de estado y contador -->
+            <div class="flex justify-between items-start mt-2">
+              <div class="flex-1">
+                @if (getFieldError('subject')) {
+                  <p class="text-red-400 text-sm animate-fadeIn flex items-start">
+                    <svg class="w-4 h-4 mr-1 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>{{ getFieldError('subject') }}</span>
+                  </p>
+                } @else if (isFieldValid('subject')) {
+                  <p class="text-green-400 text-sm animate-fadeIn flex items-center">
+                    <svg class="w-4 h-4 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Asunto descriptivo
+                  </p>
+                }
+              </div>
+              <span class="text-gray-400 text-sm ml-2 flex-shrink-0"
+                    [class.text-red-400]="getCharacterCount('subject') > getMaxLength('subject') * 0.9"
+                    [class.text-yellow-400]="getCharacterCount('subject') > getMaxLength('subject') * 0.8">
                 {{ getCharacterCount('subject') }}/{{ getMaxLength('subject') }}
               </span>
             </div>
           </div>
 
           <!-- Mensaje -->
-          <div>
+          <div class="relative">
             <label for="message" class="block text-sm font-medium text-gray-300 mb-2">
               Mensaje *
             </label>
-            <textarea
-              id="message"
-              formControlName="message"
-              rows="5"
-              [class]="'w-full bg-gray-700 text-white p-3 rounded-lg border transition duration-300 resize-none ' + 
-                      (isFieldInvalid('message') ? 'border-red-500 focus:border-red-400' : 
-                       isFieldValid('message') ? 'border-green-500 focus:border-green-400' : 
-                       'border-gray-600 focus:border-blue-400')"
-              placeholder="Cuéntame sobre tu proyecto, necesidades, presupuesto estimado, cronograma, etc."
-            ></textarea>
-            <div class="flex justify-between items-center mt-1">
-              @if (getFieldError('message')) {
-                <p class="text-red-400 text-sm">{{ getFieldError('message') }}</p>
-              } @else {
-                <span></span>
-              }
-              <span class="text-gray-400 text-sm">
+            
+            <!-- Sugerencia inteligente basada en servicio -->
+            @if (getServiceSuggestion() && (!message?.value || message?.value.length < 50)) {
+              <div class="mb-3 p-3 bg-blue-900/30 border border-blue-600/30 rounded-lg">
+                <div class="flex items-start space-x-2">
+                  <svg class="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                  </svg>
+                  <div>
+                    <p class="text-blue-400 text-sm font-medium mb-1">💡 Sugerencia para tu mensaje:</p>
+                    <p class="text-gray-300 text-sm">{{ getServiceSuggestion() }}</p>
+                  </div>
+                </div>
+              </div>
+            }
+            
+            <div class="relative">
+              <textarea
+                id="message"
+                formControlName="message"
+                rows="5"
+                [class]="'w-full bg-gray-700 text-white p-3 pr-10 rounded-lg border transition-all duration-300 resize-none ' + 
+                        (isFieldInvalid('message') ? 'border-red-500 focus:border-red-400 focus:ring-2 focus:ring-red-400/20' : 
+                         isFieldValid('message') ? 'border-green-500 focus:border-green-400 focus:ring-2 focus:ring-green-400/20' : 
+                         isFieldValidating('message') ? 'border-blue-500 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20' :
+                         'border-gray-600 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20')"
+                placeholder="Cuéntame sobre tu proyecto: necesidades, objetivos, presupuesto estimado, cronograma, tecnologías preferidas, etc. Entre más detalles, mejor podremos planificar juntos."
+              ></textarea>
+              
+              <!-- Indicador visual -->
+              <div class="absolute top-3 right-3">
+                @if (isFieldValidating('message')) {
+                  <svg class="animate-spin h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                } @else if (isFieldValid('message')) {
+                  <svg class="h-5 w-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                } @else if (isFieldInvalid('message')) {
+                  <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                }
+              </div>
+            </div>
+            
+            <!-- Mensaje de estado y contador -->
+            <div class="flex justify-between items-start mt-2">
+              <div class="flex-1">
+                @if (getFieldError('message')) {
+                  <p class="text-red-400 text-sm animate-fadeIn flex items-start">
+                    <svg class="w-4 h-4 mr-1 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>{{ getFieldError('message') }}</span>
+                  </p>
+                } @else if (isFieldValid('message')) {
+                  <p class="text-green-400 text-sm animate-fadeIn flex items-center">
+                    <svg class="w-4 h-4 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Mensaje descriptivo y detallado
+                  </p>
+                } @else if (message?.touched && message?.value) {
+                  <p class="text-blue-400 text-sm animate-fadeIn flex items-center">
+                    <svg class="w-4 h-4 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Tip: Incluye detalles sobre presupuesto, cronograma y tecnologías
+                  </p>
+                }
+              </div>
+              <span class="text-gray-400 text-sm ml-2 flex-shrink-0"
+                    [class.text-red-400]="getCharacterCount('message') > getMaxLength('message') * 0.9"
+                    [class.text-yellow-400]="getCharacterCount('message') > getMaxLength('message') * 0.8">
                 {{ getCharacterCount('message') }}/{{ getMaxLength('message') }}
               </span>
             </div>
+            
+            <!-- Sugerencia de mejora inteligente -->
+            @if (getMessageImprovement()) {
+              <div class="mt-2 p-2 bg-yellow-900/20 border border-yellow-600/30 rounded-lg">
+                <div class="flex items-start space-x-2">
+                  <svg class="w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                  </svg>
+                  <p class="text-yellow-200 text-sm">
+                    <span class="font-medium">💡 Mejora tu mensaje:</span> {{ getMessageImprovement() }}
+                  </p>
+                </div>
+              </div>
+            }
           </div>
 
           <!-- Mensaje de estado -->
@@ -285,7 +523,7 @@
     </div>
 
     <!-- Newsletter Signup -->
-    <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-lg p-6 text-center">
+    <div class="bg-gradient-to-r bg-gray-800 rounded-lg p-6 text-center">
       <div class="max-w-xl mx-auto">
         <h3 class="text-xl font-bold text-white mb-3">
           🚀 Mantente al día con mis proyectos
