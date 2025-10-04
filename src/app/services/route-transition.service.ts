@@ -46,7 +46,7 @@ export class RouteTransitionService {
     this.renderer.domElement.style.left = '0';
     this.renderer.domElement.style.width = '100%';
     this.renderer.domElement.style.height = '100%';
-    this.renderer.domElement.style.zIndex = '9999';
+    this.renderer.domElement.style.zIndex = '1';
     this.renderer.domElement.style.pointerEvents = 'none';
   }
 

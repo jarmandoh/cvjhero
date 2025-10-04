@@ -20,6 +20,23 @@ export class EmailService {
   private readonly METRICS_KEY = 'cvjhero_email_metrics';
   private readonly AUTORESPONDER_KEY = 'cvjhero_autoresponder';
   
+  private emailConfigSubject = new BehaviorSubject<EmailConfig | null>(null);
+  public emailConfig$ = this.emailConfigSubject.asObservable();
+
+  private readonly defaultConfig: EmailConfig = {
+    serviceId: 'service_cvjhero',
+    templateId: 'template_contact',
+    publicKey: 'your_public_key_here'
+  };
+
+  private readonly defaultAutoResponder: AutoResponder = {
+    enabled: true,
+    templateId: 'auto_responder',
+    delay: 5,
+    subject: 'Gracias por contactar conmigo',
+    message: 'He recibido tu mensaje y me pondré en contacto contigo pronto.'
+  };
+
   private readonly defaultMetrics: EmailMetrics = {
     totalSent: 0,
     totalDelivered: 0,
@@ -30,19 +47,8 @@ export class EmailService {
     clickRate: 0,
     bounceRate: 0
   };
-  
-  private emailConfigSubject = new BehaviorSubject<EmailConfig | null>(null);
-  public emailConfig$ = this.emailConfigSubject.asObservable();
 
-  // Configuración predeterminada (EmailJS)
-  private readonly defaultConfig: EmailConfig = {
-    serviceId: 'service_cvjhero',
-    templateId: 'template_contact',
-    publicKey: 'your_public_key_here'
-  };
-
-  // Templates predeterminados
-  private defaultTemplates: EmailTemplate[] = [
+  private readonly defaultTemplates: EmailTemplate[] = [
     {
       id: 'contact_form',
       name: 'Formulario de Contacto',
@@ -127,9 +133,6 @@ export class EmailService {
     this.emailConfigSubject.next(config);
   }
 
-  /**
-   * Configura el servicio de email
-   */
   configureEmail(config: EmailConfig): Observable<boolean> {
     const success = this.setToStorage(this.STORAGE_KEY, config);
     if (success) {
@@ -138,179 +141,83 @@ export class EmailService {
     return of(success);
   }
 
-  /**
-   * Obtiene la configuración actual
-   */
   getConfig(): EmailConfig | null {
     return this.emailConfigSubject.value;
   }
 
-  /**
-   * Envía un email usando la configuración actual
-   */
-  sendEmail(formData: ContactFormData): Observable<EmailResponse> {
-    const config = this.getConfig();
-    
-    if (!config) {
-      return of({
-        success: false,
-        error: 'Configuración de email no disponible',
-        timestamp: new Date()
-      });
-    }
-
-    // Simular envío de email (en producción se integraría con EmailJS, SendGrid, etc.)
-    return this.simulateEmailSend(formData, config).pipe(
-      delay(2000), // Simular latencia de red
+  sendContactForm(formData: ContactFormData): Observable<EmailResponse> {
+    return of({
+      success: true,
+      messageId: 'msg_' + Date.now(),
+      timestamp: new Date(),
+      details: 'Email sent successfully'
+    }).pipe(
+      delay(1500),
       map(response => {
-        this.updateMetrics(response);
+        if (response.success) {
+          this.updateMetrics(response);
+          this.sendAutoResponder(formData);
+        }
         return response;
       }),
-      catchError(error => {
-        console.error('Error sending email:', error);
-        return of({
-          success: false,
-          error: error.message || 'Error desconocido',
-          timestamp: new Date()
-        });
-      })
+      catchError(error => of({
+        success: false,
+        messageId: '',
+        timestamp: new Date(),
+        details: error.message || 'Error sending email'
+      }))
     );
   }
 
-  /**
-   * Simula el envío de email (para desarrollo)
-   */
-  private simulateEmailSend(formData: ContactFormData, config: EmailConfig): Observable<EmailResponse> {
-    // Validar datos requeridos
-    if (!formData.name || !formData.email || !formData.message) {
-      return of({
-        success: false,
-        error: 'Faltan campos obligatorios',
-        timestamp: new Date()
-      });
-    }
-
-    // Simular éxito/fallo aleatorio para testing
-    const success = Math.random() > 0.1; // 90% éxito
-
-    if (success) {
-      // Enviar autoresponder si está habilitado
-      this.sendAutoResponder(formData);
-      
-      return of({
-        success: true,
-        messageId: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        timestamp: new Date()
-      });
-    } else {
-      return of({
-        success: false,
-        error: 'Error en el servidor de email',
-        timestamp: new Date()
-      });
-    }
-  }
-
-  /**
-   * Envía respuesta automática al usuario
-   */
   private sendAutoResponder(formData: ContactFormData): void {
     const autoResponder = this.getAutoResponderConfig();
-    
     if (autoResponder.enabled) {
-      // En producción, aquí se enviaría el email automático
       console.log('Auto-responder enviado a:', formData.email);
       console.log('Template:', autoResponder.templateId);
     }
   }
 
-  /**
-   * Obtiene configuración de auto-responder
-   */
   getAutoResponderConfig(): AutoResponder {
-    return this.getFromStorage(this.AUTORESPONDER_KEY, {
-      enabled: true,
-      templateId: 'auto_responder',
-      delay: 5,
-      subject: 'Gracias por contactar conmigo',
-      message: 'He recibido tu mensaje y me pondré en contacto contigo pronto.'
-    });
+    return this.getFromStorage(this.AUTORESPONDER_KEY, this.defaultAutoResponder);
   }
 
-  /**
-   * Configura auto-responder
-   */
   configureAutoResponder(config: AutoResponder): Observable<boolean> {
-    try {
-      if (this.isClient) {
-        localStorage.setItem('cvjhero_autoresponder', JSON.stringify(config));
-      }
-      return of(true);
-    } catch (error) {
-      console.error('Error saving auto-responder config:', error);
-      return of(false);
-    }
+    return of(this.setToStorage(this.AUTORESPONDER_KEY, config));
   }
 
-  /**
-   * Obtiene templates de email
-   */
   getEmailTemplates(): EmailTemplate[] {
     return this.getFromStorage(this.TEMPLATES_KEY, this.defaultTemplates);
   }
 
-  /**
-   * Guarda templates de email
-   */
   saveEmailTemplates(templates: EmailTemplate[]): Observable<boolean> {
     return of(this.setToStorage(this.TEMPLATES_KEY, templates));
   }
 
-  /**
-   * Actualiza métricas de email
-   */
   private updateMetrics(response: EmailResponse): void {
-    try {
-      const current = this.getEmailMetrics();
-      
-      if (response.success) {
-        current.totalSent++;
-        current.totalDelivered++; // En producción, esto vendría del webhook
-      }
-      
-      // Calcular tasas
-      current.openRate = current.totalSent > 0 ? (current.totalOpened / current.totalSent) * 100 : 0;
-      current.clickRate = current.totalSent > 0 ? (current.totalClicked / current.totalSent) * 100 : 0;
-      current.bounceRate = current.totalSent > 0 ? (current.totalBounced / current.totalSent) * 100 : 0;
-      
-      if (this.isClient) {
-        localStorage.setItem(this.METRICS_KEY, JSON.stringify(current));
-      }
-    } catch (error) {
-      console.error('Error updating metrics:', error);
+    const current = this.getEmailMetrics();
+    
+    if (response.success) {
+      current.totalSent++;
+      current.totalDelivered++;
     }
+    
+    current.openRate = current.totalSent > 0 ? (current.totalOpened / current.totalSent) * 100 : 0;
+    current.clickRate = current.totalSent > 0 ? (current.totalClicked / current.totalSent) * 100 : 0;
+    current.bounceRate = current.totalSent > 0 ? (current.totalBounced / current.totalSent) * 100 : 0;
+    
+    this.setToStorage(this.METRICS_KEY, current);
   }
 
-  /**
-   * Obtiene métricas de email
-   */
   getEmailMetrics(): EmailMetrics {
     return this.getFromStorage(this.METRICS_KEY, this.defaultMetrics);
   }
 
-  /**
-   * Valida una dirección de email
-   */
   validateEmail(email: string): boolean {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   }
 
-  /**
-   * Obtiene el estado de un email enviado
-   */
   getEmailStatus(messageId: string): Observable<EmailStatus> {
-    // En producción, esto consultaría la API del proveedor de email
     return of({
       sent: true,
       delivered: Math.random() > 0.1,
@@ -319,12 +226,5 @@ export class EmailService {
       bounced: Math.random() > 0.95,
       timestamp: new Date()
     }).pipe(delay(1000));
-  }
-
-  /**
-   * Resetea las métricas
-   */
-  resetMetrics(): Observable<boolean> {
-    return of(this.setToStorage(this.METRICS_KEY, this.defaultMetrics));
   }
 }

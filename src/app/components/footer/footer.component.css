@@ -1,4 +1,10 @@
-svg{
+footer {
+    position: relative;
+    z-index: 1000; /* Asegura que esté por encima de las transiciones */
+    background-color: #1f2937; /* Color de fondo del footer */
+}
+
+svg {
     fill: white;
 }
 

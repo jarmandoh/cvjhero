@@ -2,6 +2,16 @@
    NAVEGACIÓN DESKTOP - ANIMACIONES Y ESTILOS
    ================================= */
 
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000; /* Asegura que esté por encima de las transiciones */
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px);
+}
+
 /* Estilos base para items de navegación */
 .nav-item {
     position: relative;

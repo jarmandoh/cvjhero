@@ -7,23 +7,23 @@ import { Router, NavigationStart, NavigationEnd, Event } from '@angular/router';
   template: '<div #container class="route-transition-container"></div>',
   styles: [`
     .route-transition-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;
-      z-index: 9999;
-      background: transparent;
-    }
-    :host {
-      position: fixed;
+      position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
       pointer-events: none;
-      z-index: 9999;
+      z-index: 100;
+      background: transparent;
+    }
+    :host {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 100;
     }
   `],
   standalone: true
